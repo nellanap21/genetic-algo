@@ -22,8 +22,8 @@ class GenomeTest (unittest.TestCase):
         self.assertEqual(type(gene), np.ndarray)
 
     def testRandomGenomeExists(self):
-        data = genome.Genome.get_random_genome(2, 5)
-        print(data)
+        data = genome.Genome.get_random_genome(20, 3)
+        # print(data)
         self.assertIsNotNone(data)
 
     def testGeneSpecExist(self):
@@ -45,5 +45,19 @@ class GenomeTest (unittest.TestCase):
         #print(spec["link_length"]["ind"])
         #print(gene[spec["link_length"]["ind"]])
         self.assertGreater(gene[spec["link_length"]["ind"]], 0)
+
+    def testGeneToGeneDict(self):
+        spec = genome.Genome.get_gene_spec()
+        gene = genome.Genome.get_random_gene(len(spec))
+        gene_dict = genome.Genome.get_gene_dict(gene, spec)
+        #print(gene_dict)
+        self.assertIn("link_recurrence", gene_dict)
+
+    def testGenomeToDict(self):
+        spec = genome.Genome.get_gene_spec()
+        dna = genome.Genome.get_random_genome(len(spec), 3)
+        genome_dicts = genome.Genome.get_genome_dicts(dna, spec)
+        print(genome_dicts)
+        self.assertEqual(len(genome_dicts), 3)
 
 unittest.main()

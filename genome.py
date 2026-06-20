@@ -12,7 +12,7 @@ class Genome():
     @staticmethod
     def get_random_genome(gene_length, gene_count):
         genome = np.array([Genome.get_random_gene(gene_length) for i in range(gene_count)])
-        return genome
+        return genome # returns an array of genes
     
     @staticmethod
     def get_gene_spec():
@@ -41,5 +41,20 @@ class Genome():
         for key in gene_spec.keys():
             gene_spec[key]["ind"] = ind
             ind = ind + 1
-            
+
         return gene_spec
+    
+    @staticmethod
+    def get_gene_dict(gene, spec):
+        gene_dict = {}
+        for key in spec.keys():
+            gene_dict[key] = gene[spec[key]["ind"]]
+
+        return gene_dict
+    
+    @staticmethod
+    def get_genome_dicts(dna, spec):
+        genome_dicts = []
+        for gene in dna:
+            genome_dicts.append(Genome.get_gene_dict(gene, spec))
+        return genome_dicts # returns array of dicts
