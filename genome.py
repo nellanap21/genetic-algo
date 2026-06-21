@@ -63,15 +63,25 @@ class Genome():
     @staticmethod
     def expandLinks(parent_link, uniq_parent_name, flat_links, exp_links):
         # flat links contains all link types (ABCD)
-        # filter for those with the parent == parent_link.name
+        # find every link whose parent is the current link
         children = [l for l in flat_links if l.parent_name == parent_link.name]
+        # tracks which child number we're creating
+        sibling_ind = 1
         for c in children:
-            for r in range(c.recur):
-                c_copy = copy.copy(c)
+            for r in range(int(c.recur)):
+                sibling_ind = sibling_ind + 1
+                # create shallow copy of the child
+                c_copy = copy.copy(c)  
+                # attach to unique parent
                 c_copy.parent_name = uniq_parent_name
+                # give child unique name
                 uniq_name = c_copy.name + str(len(exp_links))
                 c_copy.name = uniq_name
+                # store sibling index
+                c_copy.sibling_ind = sibling_ind
+                # add to expanded list
                 exp_links.append(c_copy)
+                # recursively expand descendants
                 Genome.expandLinks(c, uniq_name, flat_links, exp_links)
     
 class URDFLink:

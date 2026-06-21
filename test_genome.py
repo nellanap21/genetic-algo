@@ -70,7 +70,18 @@ class GenomeTest (unittest.TestCase):
         ]
         self.assertIsNotNone(links)
 
-    def testExpandLinks(self):
+
+
+    def testExpandLinks1(self):
+        links = [
+            genome.URDFLink(name="A", parent_name="None", recur=1),
+            genome.URDFLink(name="B", parent_name="A", recur=2)          
+        ]
+        exp_links = [links[0]]
+        genome.Genome.expandLinks(links[0], links[0].name, links, exp_links)
+        self.assertEqual(len(exp_links), 3)
+
+    def testExpandLinks2(self):
         links = [
             genome.URDFLink(name="A", parent_name="None", recur=1),
             genome.URDFLink(name="B", parent_name="A", recur=1),
@@ -80,9 +91,7 @@ class GenomeTest (unittest.TestCase):
         exp_links = [links[0]]
         genome.Genome.expandLinks(links[0], links[0].name, links, exp_links) 
         names = [l.name+"-parent-is-"+l.parent_name for l in exp_links]
-        print(names)
+        # print(names)
         self.assertEqual(len(exp_links), 6)
-
-
 
 unittest.main()
