@@ -70,8 +70,8 @@ class Genome():
         # flat links contains all link types (ABCD)
         # find every link whose parent is the current link
         children = [l for l in flat_links if l.parent_name == parent_link.name]
-        # tracks which child number we're creating
-        sibling_ind = 1
+        # tracks which child number we're creating to rotate siblings
+        sibling_ind = 1 
         for c in children:
             for r in range(int(c.recur)):
                 sibling_ind = sibling_ind + 1
@@ -171,6 +171,8 @@ class URDFLink:
         self.control_waveform = control_waveform
         self.control_amp = control_amp
         self.control_freq = control_freq
+
+        self.sibling_ind = 1
 
     def to_link_element(self, adom):
         #         <link name="base_link">
@@ -273,6 +275,7 @@ class URDFLink:
         # <origin rpy="0 0 0" xyz="0 0.5 0"/>
         orig_tag = adom.createElement("origin")
         
+        # rotation will increase based on number of siblings
         rpy1 = self.joint_origin_rpy_1 * self.sibling_ind
 
         rpy = str(rpy1) + " " + str(self.joint_origin_rpy_2) + " " + str(self.joint_origin_rpy_3)

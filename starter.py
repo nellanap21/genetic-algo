@@ -14,7 +14,7 @@ plane_shape = p.createCollisionShape(p.GEOM_PLANE)
 floor = p.createMultiBody(plane_shape, plane_shape)
 
 # add robot
-rob1 = p.loadURDF("test.urdf")
+rob1 = p.loadURDF("test_radial.urdf")
 
 p.setGravity(0, 0, -10)
 
