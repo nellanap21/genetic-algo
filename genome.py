@@ -49,17 +49,22 @@ class Genome():
     def get_gene_dict(gene, spec):
         gene_dict = {}
         for key in spec.keys():
-            gene_dict[key] = gene[spec[key]["ind"]]
+            ind = spec[key]["ind"]
+            scale = spec[key]["scale"]
+            gene_dict[key] = gene[ind] * scale
 
         return gene_dict
     
     @staticmethod
-    def get_genome_dicts(dna, spec):
+    def get_genome_dicts(genome, spec):
         genome_dicts = []
-        for gene in dna:
+        for gene in genome:
             genome_dicts.append(Genome.get_gene_dict(gene, spec))
         return genome_dicts # returns array of dicts
     
+
+
+
     @staticmethod
     def expandLinks(parent_link, uniq_parent_name, flat_links, exp_links):
         # flat links contains all link types (ABCD)
@@ -84,12 +89,79 @@ class Genome():
                 # recursively expand descendants
                 Genome.expandLinks(c, uniq_name, flat_links, exp_links)
     
+    @staticmethod
+    def genome_to_links(gdicts):
+        # turns genome (array of dicts) int
+        # array of links
+        link_ind = 0
+        parent_names = [str(link_ind)]
+        links = []
+        for gdict in gdicts:
+            link_ind = link_ind + 1
+            link_name = str(link_ind)
+            parent_ind = gdict["joint_parent"] * len(parent_names)
+            parent_name = parent_names[int(parent_ind)]
+            recur = gdict["link_recurrence"]
+            link = URDFLink(name=link_name, 
+                            parent_name=parent_name, 
+                            recur=recur+1,
+                            link_length=gdict["link_length"],
+                            link_radius=gdict["link_radius"],
+                            link_mass=gdict["link_mass"],
+                            joint_type=gdict["joint_type"],
+                            joint_parent=gdict["joint_parent"],
+                            joint_axis_xyz=gdict["joint_axis_xyz"],
+                            joint_origin_rpy_1=gdict["joint_origin_rpy_1"],
+                            joint_origin_rpy_2=gdict["joint_origin_rpy_2"],
+                            joint_origin_rpy_3=gdict["joint_origin_rpy_3"],
+                            joint_origin_xyz_1=gdict["joint_origin_xyz_1"],
+                            joint_origin_xyz_2=gdict["joint_origin_xyz_2"],
+                            joint_origin_xyz_3=gdict["joint_origin_xyz_3"],
+                            control_waveform=gdict["control_waveform"],
+                            control_amp=gdict["control_amp"],
+                            control_freq=gdict["control_freq"])
+            links.append(link)
+            parent_names.append(link_name)
+        return links
+    
+
 class URDFLink:
     # OOP - creating wrapper which contains all the data i need to represent a link
     # constructor which takes as its argument
     # itself the instance of the object plus
     # name, parent_name, recurrence level - assigns those
-    def __init__(self, name, parent_name, recur):
+    def __init__(self, name, parent_name, recur, 
+                 link_length=0.1,
+                 link_radius=0.1,
+                 link_mass=0.1,
+                 joint_type=0.1,
+                 joint_parent=0.1,
+                 joint_axis_xyz=0.1,
+                 joint_origin_rpy_1=0.1,
+                 joint_origin_rpy_2=0.1,
+                 joint_origin_rpy_3=0.1,                                  
+                 joint_origin_xyz_1=0.1,
+                 joint_origin_xyz_2=0.1,
+                 joint_origin_xyz_3=0.1,
+                 control_waveform=0.1,
+                 control_amp=0.1,
+                 control_freq=0.1):
         self.name = name
         self.parent_name = parent_name
         self.recur = recur
+        self.link_length = link_length
+        self.link_radius = link_radius
+        self.link_mass = link_mass
+        self.joint_type = joint_type
+        self.joint_parent = joint_parent
+        self.joint_axis_xyz = joint_axis_xyz
+        self.joint_origin_rpy_1 = joint_origin_rpy_1
+        self.joint_origin_rpy_2 = joint_origin_rpy_2
+        self.joint_origin_rpy_3 = joint_origin_rpy_3       
+        self.joint_origin_xyz_1 = joint_origin_xyz_1         
+        self.joint_origin_xyz_2 = joint_origin_xyz_2         
+        self.joint_origin_xyz_3 = joint_origin_xyz_3         
+        self.control_waveform = control_waveform
+        self.control_amp = control_amp
+        self.control_freq = control_freq
+

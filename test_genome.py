@@ -94,4 +94,13 @@ class GenomeTest (unittest.TestCase):
         # print(names)
         self.assertEqual(len(exp_links), 6)
 
+    def testGetLinks(self):
+        spec = genome.Genome.get_gene_spec()
+        dna = genome.Genome.get_random_genome(len(spec), 3)
+        genome_dicts = genome.Genome.get_genome_dicts(dna, spec)        
+        links = genome.Genome.genome_to_links(genome_dicts)
+        self.assertEqual(len(links), 3)
+
+
+
 unittest.main()
