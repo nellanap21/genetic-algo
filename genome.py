@@ -93,11 +93,10 @@ class Genome():
     def genome_to_links(gdicts):
         # turns genome (array of dicts) int
         # array of links
+        links = []        
         link_ind = 0
-        parent_names = [str(link_ind)]
-        links = []
+        parent_names = [str(link_ind)] # start with just number 0
         for gdict in gdicts:
-            link_ind = link_ind + 1
             link_name = str(link_ind)
             parent_ind = gdict["joint_parent"] * len(parent_names)
             parent_name = parent_names[int(parent_ind)]
@@ -121,7 +120,13 @@ class Genome():
                             control_amp=gdict["control_amp"],
                             control_freq=gdict["control_freq"])
             links.append(link)
-            parent_names.append(link_name)
+            if link_ind != 0: # don't re-add the first link
+                parent_names.append(link_name)
+            link_ind = link_ind + 1
+
+        # now fix the first link so it links to nothing
+        links[0].parent_name = "None"
+
         return links
     
 
