@@ -1,9 +1,11 @@
+from xml.dom.minidom import getDOMImplementation
 import genome
 
 class Creature:
     def __init__(self, gene_count):
         self.spec = genome.Genome.get_gene_spec()
         self.dna = genome.Genome.get_random_genome(len(self.spec), gene_count)
+        self.flat_links = None
     
     def get_flat_links(self):
         gdicts = genome.Genome.get_genome_dicts(self.dna, self.spec)
@@ -19,3 +21,20 @@ class Creature:
                                   exp_links)
         self.exp_links = exp_links
         return self.exp_links
+    
+    def to_xml(self):
+        # make sure expanded links are available
+        self.get_expanded_links()
+        domimpl = getDOMImplementation()
+        adom = domimpl.createDocument(None, "start", None)
+        robot_tag = adom.createElement("robot")
+        for link in self.exp_links:
+            robot_tag.appendChild(link.to_link_element(adom))
+        first = True
+        for link in self.exp_links:
+            if first: # skip the root node!
+                first = False
+                continue
+            robot_tag.appendChild(link.to_joint_element(adom))
+        robot_tag.setAttribute("name", "pepe") # choose a name!
+        return robot_tag.toprettyxml()

@@ -100,6 +100,7 @@ class Genome():
             link_name = str(link_ind)
             parent_ind = gdict["joint_parent"] * len(parent_names)
             parent_name = parent_names[int(parent_ind)]
+            # print("available parents: ", parent_names, "chose", parent_name)
             recur = gdict["link_recurrence"]
             link = URDFLink(name=link_name, 
                             parent_name=parent_name, 
@@ -169,4 +170,119 @@ class URDFLink:
         self.control_waveform = control_waveform
         self.control_amp = control_amp
         self.control_freq = control_freq
+
+    def to_link_element(self, adom):
+        #         <link name="base_link">
+        #     <visual>
+        #       <geometry>
+        #         <cylinder length="0.6" radius="0.25"/>
+        #       </geometry>
+        #     </visual>
+        #     <collision>
+        #       <geometry>
+        #         <cylinder length="0.6" radius="0.25"/>
+        #       </geometry>
+        #     </collision>
+        #     <inertial>
+        # 	    <mass value="0.25"/>
+        # 	    <inertia ixx="0.0003" iyy="0.0003" izz="0.0003" ixy="0" ixz="0" iyz="0"/>
+        #     </inertial>
+        #   </link>
+  
+        link_tag = adom.createElement("link")
+        link_tag.setAttribute("name", self.name)
+        vis_tag = adom.createElement("visual")
+        geom_tag = adom.createElement("geometry")
+        cyl_tag = adom.createElement("cylinder")
+        cyl_tag.setAttribute("length", str(self.link_length))
+        cyl_tag.setAttribute("radius", str(self.link_radius))
+        
+        geom_tag.appendChild(cyl_tag)
+        vis_tag.appendChild(geom_tag)
+        
+        
+        coll_tag = adom.createElement("collision")
+        c_geom_tag = adom.createElement("geometry")
+        c_cyl_tag = adom.createElement("cylinder")
+        c_cyl_tag.setAttribute("length", str(self.link_length))
+        c_cyl_tag.setAttribute("radius", str(self.link_radius))
+        
+        c_geom_tag.appendChild(c_cyl_tag)
+        coll_tag.appendChild(c_geom_tag)
+        
+        #     <inertial>
+        # 	    <mass value="0.25"/>
+        # 	    <inertia ixx="0.0003" iyy="0.0003" izz="0.0003" ixy="0" ixz="0" iyz="0"/>
+        #     </inertial>
+        inertial_tag = adom.createElement("inertial")
+        mass_tag = adom.createElement("mass")
+        # pi r^2 * height
+        mass = np.pi * (self.link_radius * self.link_radius) * self.link_length
+        mass_tag.setAttribute("value", str(mass))
+        inertia_tag = adom.createElement("inertia")
+        # <inertia ixx="0.0003" iyy="0.0003" izz="0.0003" ixy="0" ixz="0" iyz="0"/>
+        inertia_tag.setAttribute("ixx", "0.03")
+        inertia_tag.setAttribute("iyy", "0.03")
+        inertia_tag.setAttribute("izz", "0.03")
+        inertia_tag.setAttribute("ixy", "0")
+        inertia_tag.setAttribute("ixz", "0")
+        inertia_tag.setAttribute("iyx", "0")
+        inertial_tag.appendChild(mass_tag)
+        inertial_tag.appendChild(inertia_tag)
+        
+
+        link_tag.appendChild(vis_tag)
+        link_tag.appendChild(coll_tag)
+        link_tag.appendChild(inertial_tag)
+        
+        return link_tag
+
+    def to_joint_element(self, adom):
+        #           <joint name="base_to_sub2" type="revolute">
+        #     <parent link="base_link"/>
+        #     <child link="sub_link2"/>
+        #     <axis xyz="1 0 0"/>
+        #     <limit effort="10" upper="0" lower="10" velocity="1"/>
+        #     <origin rpy="0 0 0" xyz="0 0.5 0"/>
+        #   </joint>
+        joint_tag = adom.createElement("joint")
+        joint_tag.setAttribute("name", self.name + "_to_" + self.parent_name)
+        if self.joint_type >= 0.5:
+            joint_tag.setAttribute("type", "revolute")
+        else:
+            joint_tag.setAttribute("type", "revolute")
+        parent_tag = adom.createElement("parent")
+        parent_tag.setAttribute("link", self.parent_name)
+        child_tag = adom.createElement("child")
+        child_tag.setAttribute("link", self.name)
+        axis_tag = adom.createElement("axis")
+        if self.joint_axis_xyz <= 0.33:
+            axis_tag.setAttribute("xyz", "1 0 0")
+        if self.joint_axis_xyz > 0.33 and self.joint_axis_xyz <= 0.66:
+            axis_tag.setAttribute("xyz", "0 1 0")
+        if self.joint_axis_xyz > 0.66:
+            axis_tag.setAttribute("xyz", "0 0 1")
+        
+        limit_tag = adom.createElement("limit")
+        # effort upper lower velocity
+        limit_tag.setAttribute("effort", "1")
+        limit_tag.setAttribute("upper", "-3.1415")
+        limit_tag.setAttribute("lower", "3.1415")
+        limit_tag.setAttribute("velocity", "1")
+        # <origin rpy="0 0 0" xyz="0 0.5 0"/>
+        orig_tag = adom.createElement("origin")
+        
+        rpy1 = self.joint_origin_rpy_1 * self.sibling_ind
+
+        rpy = str(rpy1) + " " + str(self.joint_origin_rpy_2) + " " + str(self.joint_origin_rpy_3)
+        orig_tag.setAttribute("rpy", rpy)
+        xyz = str(self.joint_origin_xyz_1) + " " + str(self.joint_origin_xyz_2) + " " + str(self.joint_origin_xyz_3)
+        orig_tag.setAttribute("xyz", xyz)
+
+        joint_tag.appendChild(parent_tag)
+        joint_tag.appendChild(child_tag)
+        joint_tag.appendChild(axis_tag)
+        joint_tag.appendChild(limit_tag)
+        joint_tag.appendChild(orig_tag)
+        return joint_tag
 

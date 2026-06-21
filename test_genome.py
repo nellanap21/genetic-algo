@@ -1,6 +1,8 @@
 import unittest
 import genome
 import numpy as np
+from xml.dom.minidom import getDOMImplementation
+
 
 class GenomeTest (unittest.TestCase):
     def testClassExists(self):
@@ -101,6 +103,22 @@ class GenomeTest (unittest.TestCase):
         links = genome.Genome.genome_to_links(genome_dicts)
         self.assertEqual(len(links), 3)
 
+    def testGetLinksUniqueNames(self):
+        spec = genome.Genome.get_gene_spec()
+        dna = genome.Genome.get_random_genome(len(spec), 3)
+        genome_dicts = genome.Genome.get_genome_dicts(dna, spec)        
+        links = genome.Genome.genome_to_links(genome_dicts)
+        # check that each link's name only appears once
+        for l in links:
+            names = [link.name for link in links if link.name == l.name] 
+            self.assertEqual(len(names), 1)       
 
+    def testLinkToXML(self):
+        link = genome.URDFLink(name="A", parent_name="None", recur=1)
+        domimpl = getDOMImplementation()
+        adom = domimpl.createDocument(None, "robot", None)
+        xml_str = link.to_link_element(adom)
+        # print(xml_str)
+        self.assertIsNotNone(xml_str)
 
 unittest.main()
