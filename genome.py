@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 
 class Genome():
     def __init__(self):
@@ -58,3 +59,27 @@ class Genome():
         for gene in dna:
             genome_dicts.append(Genome.get_gene_dict(gene, spec))
         return genome_dicts # returns array of dicts
+    
+    @staticmethod
+    def expandLinks(parent_link, uniq_parent_name, flat_links, exp_links):
+        # flat links contains all link types (ABCD)
+        # filter for those with the parent == parent_link.name
+        children = [l for l in flat_links if l.parent_name == parent_link.name]
+        for c in children:
+            for r in range(c.recur):
+                c_copy = copy.copy(c)
+                c_copy.parent_name = uniq_parent_name
+                uniq_name = c_copy.name + str(len(exp_links))
+                c_copy.name = uniq_name
+                exp_links.append(c_copy)
+                Genome.expandLinks(c, uniq_name, flat_links, exp_links)
+    
+class URDFLink:
+    # OOP - creating wrapper which contains all the data i need to represent a link
+    # constructor which takes as its argument
+    # itself the instance of the object plus
+    # name, parent_name, recurrence level - assigns those
+    def __init__(self, name, parent_name, recur):
+        self.name = name
+        self.parent_name = parent_name
+        self.recur = recur
