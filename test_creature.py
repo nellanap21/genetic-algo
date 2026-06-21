@@ -15,24 +15,18 @@ class TestCreature(unittest.TestCase):
     def testExpLinks(self):
         c = creature.Creature(gene_count=3)
         links = c.get_flat_links()
-        # for l in links:
-        #     print(l.name)
-        # print("=====")
-        exp_links = c.get_expanded_links() # something is wrong in this function to give wrong names
-        # for e in exp_links:
-        #     print(e.name)
-        # print(len(exp_links))
+        exp_links = c.get_expanded_links() 
         self.assertGreaterEqual(len(exp_links), len(links))    
 
     def testToXMLNotNone(self):
-        c = creature.Creature(gene_count=2)
+        c = creature.Creature(gene_count=2)      
         xml_str = c.to_xml()
-        # print(xml_str)
         self.assertIsNotNone(xml_str)    
 
     def testLoadXML(self):
         c = creature.Creature(gene_count=20)
         xml_str = c.to_xml()
+
         with open('test.urdf', 'w') as f:
             f.write(xml_str)
         p.connect(p.DIRECT)
@@ -50,5 +44,30 @@ class TestCreature(unittest.TestCase):
         xml_str = c.to_xml()
         with open('test_radial.urdf', 'w') as f:
             f.write('<?xml version="1.0"?>' + "\n" + xml_str)
+
+    def testMotor(self):
+        m = creature.Motor(0.1, 0.5, 0.5)
+        self.assertIsNotNone(m)
+
+    def testMotorVal(self):
+        m = creature.Motor(0.1, 0.5, 0.5)
+        # this has value of 0.1 coming into control_waveform
+        # that means it should be a PULSE wave
+        # self.phase is 0, so output should be 1
+        self.assertEqual(m.get_output(), 1)
+
+    def testMotorVal2(self):
+        m = creature.Motor(0.6, 0.5, 0.5)
+        m.get_output()
+        m.get_output()
+
+        self.assertGreater(m.get_output(), 0)
+
+
+    def testCMotor(self):
+        c = creature.Creature(gene_count = 4)
+        ls = c.get_expanded_links()
+        ms = c.get_motors()
+        self.assertEqual(len(ls) - 1, len(ms))
 
 unittest.main()
