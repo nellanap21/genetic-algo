@@ -81,6 +81,7 @@ class Genome():
                 c_copy.parent_name = uniq_parent_name
                 # give child unique name
                 uniq_name = c_copy.name + str(len(exp_links))
+                print("exp: ", c.name, " -> " , uniq_name)
                 c_copy.name = uniq_name
                 # store sibling index
                 c_copy.sibling_ind = sibling_ind

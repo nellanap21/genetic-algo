@@ -6,15 +6,20 @@ class Creature:
         self.spec = genome.Genome.get_gene_spec()
         self.dna = genome.Genome.get_random_genome(len(self.spec), gene_count)
         self.flat_links = None
+        self.exp_links = None
     
     def get_flat_links(self):
-        gdicts = genome.Genome.get_genome_dicts(self.dna, self.spec)
-        self.flat_links = genome.Genome.genome_to_links(gdicts)
+        if self.flat_links == None:
+            gdicts = genome.Genome.get_genome_dicts(self.dna, self.spec)
+            self.flat_links = genome.Genome.genome_to_links(gdicts)
         return self.flat_links
     
     def get_expanded_links(self):
         self.get_flat_links()
-        exp_links = []
+        if self.exp_links is not None:
+            return self.exp_links
+        
+        exp_links = [self.flat_links[0]]
         genome.Genome.expandLinks(self.flat_links[0],
                                   self.flat_links[0].name,
                                   self.flat_links,

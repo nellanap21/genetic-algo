@@ -106,11 +106,12 @@ class GenomeTest (unittest.TestCase):
     def testGetLinksUniqueNames(self):
         spec = genome.Genome.get_gene_spec()
         dna = genome.Genome.get_random_genome(len(spec), 3)
-        genome_dicts = genome.Genome.get_genome_dicts(dna, spec)        
+        genome_dicts = genome.Genome.get_genome_dicts(dna, spec)     
         links = genome.Genome.genome_to_links(genome_dicts)
         # check that each link's name only appears once
         for l in links:
             names = [link.name for link in links if link.name == l.name] 
+            # print(l.name) # correctly naming links at this point: 0, 1, 2
             self.assertEqual(len(names), 1)       
 
     def testLinkToXML(self):

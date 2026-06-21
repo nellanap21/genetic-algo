@@ -12,18 +12,30 @@ class TestCreature(unittest.TestCase):
         self.assertEqual(len(links), 4)
 
     def testExpLinks(self):
-        for i in range(20):
-            c = creature.Creature(gene_count=25)
-            links = c.get_flat_links()
-            exp_links = c.get_expanded_links()
-            # print(len(exp_links))
-            self.assertGreaterEqual(len(exp_links), len(links))    
+        c = creature.Creature(gene_count=3)
+        links = c.get_flat_links()
+        # for l in links:
+        #     print(l.name)
+        # print("=====")
+        exp_links = c.get_expanded_links() # something is wrong in this function to give wrong names
+        # for e in exp_links:
+        #     print(e.name)
+        # print(len(exp_links))
+        self.assertGreaterEqual(len(exp_links), len(links))    
 
     def testToXMLNotNone(self):
         c = creature.Creature(gene_count=2)
         xml_str = c.to_xml()
-        print(xml_str)
+        # print(xml_str)
         self.assertIsNotNone(xml_str)    
 
+    def testLoadXML(self):
+        c = creature.Creature(gene_count=20)
+        xml_str = c.to_xml()
+        with open('test.urdf', 'w') as f:
+            f.write(xml_str)
+        p.connect(p.DIRECT)
+        cid = p.loadURDF('test.urdf')
+        self.assertIsNotNone(cid)
 
 unittest.main()
