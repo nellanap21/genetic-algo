@@ -73,6 +73,10 @@ class ThreadedSim():
         return cr
 
     def eval_population(self, pop, iterations):
+        """
+        pop is a Population object
+        iterations is frames in pybullet to run for at 240fps
+        """
         pool_args = []
 
         for i in range(len(pop.creatures)):

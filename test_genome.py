@@ -122,4 +122,36 @@ class GenomeTest (unittest.TestCase):
         # print(xml_str)
         self.assertIsNotNone(xml_str)
 
+    # test crossover
+    def testXO(self):
+        g1 = np.array([[1,2,3], [4,5,6], [7,8,9]])
+        g2 = np.array([[10,11,12], [13,14,15], [16,17,18]])
+        g3 = genome.Genome.crossover(g1, g2)
+        self.assertEqual(len(g3), len(g1))
+
+    # test point mutation
+    def test_point(self):
+        g1 = np.array([[1.0,2.0,3.0], [4.0,5.0,6.0], [7.0,8.0,9.0]])
+        #print(g1)
+        genome.Genome.point_mutate(g1, rate=0.5, amount=0.25)
+        #print(g1)
+
+    def test_shrink(self):
+        g1 = np.array([[1.0,2.0,3.0], [4.0,5.0,6.0], [7.0,8.0,9.0]])
+        g2 = genome.Genome.shrink_mutate(g1, rate=1)
+        #print(g1, g2)
+        self.assertNotEqual(len(g1), len(g2))
+
+    def test_grow(self):
+        g1 = np.array([[1.0,2.0,3.0], [4.0,5.0,6.0], [7.0,8.0,9.0]])
+        g2 = genome.Genome.grow_mutate(g1, rate=1)
+        # print(g1, g2)
+        self.assertGreater(len(g2), len(g1))
+
+
+
+
+
+
+
 unittest.main()

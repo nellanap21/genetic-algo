@@ -131,6 +131,47 @@ class Genome():
 
         return links
     
+    @staticmethod
+    def crossover(g1, g2):
+        xo = np.random.randint(len(g1))
+        if xo > len(g2):
+            xo = len(g2) - 1
+        g3 = np.concatenate((g1[0:xo], g2[xo:]))
+        return g3
+
+    @staticmethod
+    def point_mutate(genes, rate, amount):
+        for gene in genes:
+            # if rate is high, the more likely to mutate
+            if np.random.rand() < rate:
+                ind = np.random.randint(len(gene)) # choose one gene
+                r = (np.random.rand() - 0.5) * amount
+                gene[ind] = gene[ind] + r
+
+    @staticmethod
+    def shrink_mutate(genes, rate):
+        if np.random.rand() < rate:
+            # NOTE: adjust so that it cna remove first gene?
+            ind = np.random.randint(len(genes))
+            genes = np.delete(genes, ind, 0)
+        return genes
+
+    @staticmethod
+    def grow_mutate(genes, rate):
+        if np.random.rand() < rate:
+            gene = Genome.get_random_gene(len(genes[0]))
+            genes = np.append(genes, [gene], axis=0)
+        return genes
+
+
+
+
+
+
+
+
+
+
 
 class URDFLink:
     # OOP - creating wrapper which contains all the data i need to represent a link

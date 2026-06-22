@@ -18,9 +18,10 @@ class Population():
     @staticmethod
     def select_parent(fitmap):
         r = np.random.rand() # 0-1
-        r = r * fitmap[-1] # scale range
-        for i in range (len(fitmap)):
-            if r <= fitmap[i]:
+        r = r * fitmap[-1] # scale to range of fitnesses
+        for i in range (len(fitmap)): # iterate through fitnesses
+            # NOTE: would be better if selected highest fitness?
+            if r <= fitmap[i]: # select if fitness is big enough
                 return i
 
 
