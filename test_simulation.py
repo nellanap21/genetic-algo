@@ -38,17 +38,27 @@ class TestSim(unittest.TestCase):
         dist = cr.get_distance_travelled()
         self.assertGreater(dist, 0)        
 
-    def testPop(self):
-        # create population
-        pop = population.Population(pop_size=10, gene_count=3)
-        # create simulation
-        sim = simulation.Simulation()
-        # iterate over creatures and run in simulation
-        for cr in pop.creatures:
-            sim.run_creature(cr)
+    # def testPop(self):
+    #     # create population
+    #     pop = population.Population(pop_size=20, gene_count=3)
+    #     # create simulation
+    #     sim = simulation.Simulation()
+    #     # iterate over creatures and run in simulation
+    #     for cr in pop.creatures:
+    #         sim.run_creature(cr)
+    #     dists = [cr.get_distance_travelled() for cr in pop.creatures]
+    #     print(dists)
+    #     self.assertIsNotNone(dists)
+
+    def testProc(self):
+        pop = population.Population(pop_size=20, gene_count=3)
+        tsim = simulation.ThreadedSim(pool_size=4)
+        tsim.eval_population(pop, 2400)
         dists = [cr.get_distance_travelled() for cr in pop.creatures]
         print(dists)
         self.assertIsNotNone(dists)
 
-
-unittest.main()        
+# multiprocessing uses spawn, so every child process imports your module fresh
+# without if statement, every worker process starts the test runner again.
+if __name__ == "__main__":
+    unittest.main()
