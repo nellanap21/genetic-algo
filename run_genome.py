@@ -7,7 +7,7 @@ import time
 import creature
 import genome as genlib
 
-
+# NOTE: change so that it can take a csv_file 
 p.connect(p.GUI)
 p.setPhysicsEngineParameter(enableFileCaching=0)
 p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
@@ -21,13 +21,14 @@ p.setGravity(0, 0, -10)
 
 c = creature.Creature(gene_count = 5)
 
-dna = genlib.Genome.from_csv('6_elite.csv')
+dna = genlib.Genome.from_csv('9_elite.csv')
 c.set_dna(dna)
 
+# save it to XML
 with open('test.urdf', 'w') as f:
     c.get_expanded_links()
     f.write(c.to_xml())
-
+# load it into the sim
 cid = p.loadURDF('test.urdf')
 
 # assume creature sitting at origin

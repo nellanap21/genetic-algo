@@ -16,6 +16,7 @@ class TestPop(unittest.TestCase):
         fitmap = population.Population.get_fitness_map(fits)
         self.assertEqual(fitmap, want)
 
+    # check for parent id in the range 0-2
     def testSelPar(self):
         fits = [2.5, 1.2, 3.4]
         fitmap = population.Population.get_fitness_map(fits)

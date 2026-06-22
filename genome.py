@@ -148,13 +148,19 @@ class Genome():
 
     @staticmethod
     def point_mutate(genes, rate, amount):
-        for gene in genes:
+        new_genes = copy.copy(genes)
+        for gene in new_genes:
             # if rate is high, the more likely to mutate
             if np.random.rand() < rate:
                 ind = np.random.randint(len(gene)) # choose one gene
-                r = (np.random.rand() - 0.5) * amount
-                gene[ind] = gene[ind] + r
-        return genes
+
+                # these next two lines are from videos
+                # r = (np.random.rand() - 0.5) * amount
+                #gene[ind] = gene[ind] + r
+
+                # take the current value, multiply by random 0-1, multiply by amount
+                gene[ind] = gene[ind] * np.random.rand() * amount
+        return new_genes
 
     @staticmethod
     def shrink_mutate(genes, rate):
