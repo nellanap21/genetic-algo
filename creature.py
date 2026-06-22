@@ -45,7 +45,18 @@ class Creature:
         self.get_expanded_links()
         self.start_position = None
         self.last_position = None
-    
+
+    def set_dna(self, dna):
+        self.dna = dna
+        self.flat_links = None
+        self.exp_links = None
+        self.motors = None
+        self.get_flat_links()
+        self.get_expanded_links()
+        self.start_position = None
+        self.last_position = None
+
+
     def get_flat_links(self):
         if self.flat_links == None:
             gdicts = genome.Genome.get_genome_dicts(self.dna, self.spec)

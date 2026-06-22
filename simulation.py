@@ -81,7 +81,7 @@ class ThreadedSim():
 
         for i in range(len(pop.creatures)):
             sim_id = i % self.pool_size
-            print("eval_pop: c ind", i, "sim_ind", sim_id)
+            # print("eval_pop: c ind", i, "sim_ind", sim_id)
 
             pool_args.append([
                 sim_id,
@@ -95,8 +95,8 @@ class ThreadedSim():
                 pool_args
             )
 
-        for cr in new_creatures:
-            print(cr.get_distance_travelled())
+        # for cr in new_creatures:
+        #     print(cr.get_distance_travelled())
 
         pop.creatures = new_creatures
 
