@@ -20,6 +20,7 @@ class Motor():
         self.phase = 0
 
     def get_output(self):
+        # every time get_output is called, the phase of waveform changes
         self.phase = (self.phase + self.freq) % (np.pi * 2)
 
         if self.motor_type == MotorType.PULSE:
@@ -87,6 +88,8 @@ class Creature:
             motors = []
             for i in range(1, len(self.exp_links)):
                 l = self.exp_links[i]
+                # assume the URDFLink has control_waveform
+                # control_amp, and control_freq properties, read from genome
                 m = Motor(l.control_waveform, l.control_amp, l.control_freq)
                 motors.append(m)
             self.motors = motors

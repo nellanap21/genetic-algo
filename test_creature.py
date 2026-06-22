@@ -49,14 +49,14 @@ class TestCreature(unittest.TestCase):
         m = creature.Motor(0.1, 0.5, 0.5)
         self.assertIsNotNone(m)
 
-    def testMotorVal(self):
+    def testMotorValPulse(self):
         m = creature.Motor(0.1, 0.5, 0.5)
         # this has value of 0.1 coming into control_waveform
         # that means it should be a PULSE wave
         # self.phase is 0, so output should be 1
         self.assertEqual(m.get_output(), 1)
 
-    def testMotorVal2(self):
+    def testMotorValSine(self):
         m = creature.Motor(0.6, 0.5, 0.5)
         m.get_output()
         m.get_output()
