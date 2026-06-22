@@ -45,6 +45,7 @@ class Creature:
         self.get_expanded_links()
         self.start_position = None
         self.last_position = None
+        
 
     def set_dna(self, dna):
         self.dna = dna

@@ -19,6 +19,14 @@ class TestGA(unittest.TestCase):
             fitmap = poplib.Population.get_fitness_map(fits)
 
             print(generation, np.max(fits), np.mean(fits))
+
+            fmax = np.max(fits) # find highest dist travelled
+            # get creature with highest dist travelled
+            for cr in pop.creatures:
+                if cr.get_distance_travelled() == fmax:
+                    elite = cr
+                    break
+
             # make new generation
             new_gen = []
             for cid in range(len(pop.creatures)):
@@ -32,6 +40,8 @@ class TestGA(unittest.TestCase):
                 cr = crlib.Creature(1)
                 cr.set_dna(dna)
                 new_gen.append(cr)
+            
+            new_gen[0] = elite # you are being replaced with elite
             pop.creatures = new_gen
 
 
