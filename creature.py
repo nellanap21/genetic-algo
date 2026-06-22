@@ -45,7 +45,7 @@ class Creature:
         self.get_expanded_links()
         self.start_position = None
         self.last_position = None
-        
+        self.dist = 0
 
     def set_dna(self, dna):
         self.dna = dna
@@ -112,16 +112,28 @@ class Creature:
         return self.motors
 
     def update_position(self, pos):
+        # this measures total distance moved
+        # even if it is back and forth
+        if self.last_position != None:
+            p1 = np.array(self.last_position)
+            p2 = np.array(pos)
+            dist = np.linalg.norm(p1-p2)   
+            self.dist = self.dist + dist
+
         if self.start_position == None:
             self.start_position = pos
         else:
             self.last_position = pos
 
     def get_distance_travelled(self):
-        if self.start_position == None or self.last_position == None:
-            return 0
-        p1 = np.array(self.start_position)
-        p2 = np.array(self.last_position)
-        return np.linalg.norm(p1-p2)
+        # this measures the overall distance from origin
+        # if self.start_position == None or self.last_position == None:
+        #     return 0
+        # p1 = np.array(self.start_position)
+        # p2 = np.array(self.last_position)
+        # return np.linalg.norm(p1-p2)
+
+        # this measures total movement even back and forth
+        return self.dist
 
 
