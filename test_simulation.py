@@ -1,3 +1,6 @@
+# now that this is threaded, do not run in ipython
+# command: python test_simulation.py
+
 import unittest
 import simulation
 import creature
