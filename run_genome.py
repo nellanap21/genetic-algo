@@ -21,7 +21,7 @@ p.setGravity(0, 0, -10)
 
 c = creature.Creature(gene_count = 5)
 
-dna = genlib.Genome.from_csv('9_elite.csv')
+dna = genlib.Genome.from_csv('6_elite.csv')
 c.set_dna(dna)
 
 with open('test.urdf', 'w') as f:
@@ -49,6 +49,7 @@ while True:
     pos, orn = p.getBasePositionAndOrientation(cid)
     c.update_position(pos)
     #print(c.get_distance_travelled())
+    p.resetDebugVisualizerCamera(5, 0, 200, pos)
 
     p.stepSimulation()
     # time.sleep(0.1) # 10 times a second
