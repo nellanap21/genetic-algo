@@ -25,6 +25,7 @@ class Simulation():
         with open(xml_file, 'w') as f:
             f.write(xml_str)
         
+        # call loadURDF to load the file into simulation
         cid = p.loadURDF(xml_file, physicsClientId=pid)
 
         # sets position to slightly above the ground to fix the flying problem

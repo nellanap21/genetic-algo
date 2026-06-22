@@ -38,6 +38,7 @@ class TestSim(unittest.TestCase):
         dist = cr.get_distance_travelled()
         self.assertGreater(dist, 0)        
 
+    # test simulation in series
     # def testPop(self):
     #     # create population
     #     pop = population.Population(pop_size=20, gene_count=3)
@@ -50,6 +51,7 @@ class TestSim(unittest.TestCase):
     #     print(dists)
     #     self.assertIsNotNone(dists)
 
+    # tests threaded simulation
     def testProc(self):
         pop = population.Population(pop_size=20, gene_count=3)
         tsim = simulation.ThreadedSim(pool_size=4)
