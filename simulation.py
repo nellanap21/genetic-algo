@@ -11,12 +11,23 @@ class Simulation():
         pid = self.physicsClientId
         p.resetSimulation(physicsClientId=pid)
         p.setGravity(0, 0, -10, physicsClientId=pid)
+        # set to false, so it won't reuse same file
+        p.setPhysicsEngineParameter(enableFileCaching=0, physicsClientId=pid) 
+
+        # add floor
+        plane_shape = p.createCollisionShape(p.GEOM_PLANE, physicsClientId=pid)
+        floor = p.createMultiBody(plane_shape, plane_shape, physicsClientId=pid)
+
         xml_file = 'temp.urdf'
         xml_str = cr.to_xml()
         with open(xml_file, 'w') as f:
             f.write(xml_str)
         
         cid = p.loadURDF(xml_file, physicsClientId=pid)
+
+        # sets position to slightly above the ground to fix the flying problem
+        p.resetBasePositionAndOrientation(cid, [0,0,3], [0,0,0,1], physicsClientId=pid)
+
         for step in range(iterations):
             p.stepSimulation(physicsClientId=pid)
             if step % 24 == 0:
@@ -25,6 +36,7 @@ class Simulation():
             # get position and pass to creature
             pos, orn = p.getBasePositionAndOrientation(cid, physicsClientId=pid)
             cr.update_position(pos)
+
 
 
     def update_motors(self, cid, cr):

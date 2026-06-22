@@ -105,6 +105,9 @@ class Creature:
         else:
             self.last_position = pos
 
-
+    def get_distance_travelled(self):
+        p1 = np.array(self.start_position)
+        p2 = np.array(self.last_position)
+        return np.linalg.norm(p1-p2)
 
 

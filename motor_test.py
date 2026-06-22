@@ -26,7 +26,11 @@ with open('test.urdf', 'w') as f:
 
 cid = p.loadURDF('test.urdf')
 
+# assume creature sitting at origin
+c.update_position([0,0,0])
 
+# sets position to slightly above the ground to fix the flying problem
+p.resetBasePositionAndOrientation(cid, [0,0,3], [0,0,0,1])
 
 # needed for mac users to interact
 while True:
@@ -37,6 +41,10 @@ while True:
                                 controlMode=p.VELOCITY_CONTROL,
                                 targetVelocity=m.get_output(),
                                 force = 5)
+
+    pos, orn = p.getBasePositionAndOrientation(cid)
+    c.update_position(pos)
+    print(c.get_distance_travelled())
 
     p.stepSimulation()
     # time.sleep(0.1) # 10 times a second

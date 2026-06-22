@@ -2,6 +2,7 @@ import unittest
 import simulation
 import creature
 import os
+import population
 
 class TestSim(unittest.TestCase):
     
@@ -28,10 +29,26 @@ class TestSim(unittest.TestCase):
         sim = simulation.Simulation()
         cr = creature.Creature(gene_count = 3)
         sim.run_creature(cr)
-        # print(cr.start_position, cr.last_position)
         self.assertNotEqual(cr.start_position, cr.last_position)
 
+    def testDist(self):
+        sim = simulation.Simulation()
+        cr = creature.Creature(gene_count = 3)
+        sim.run_creature(cr)
+        dist = cr.get_distance_travelled()
+        self.assertGreater(dist, 0)        
 
+    def testPop(self):
+        # create population
+        pop = population.Population(pop_size=10, gene_count=3)
+        # create simulation
+        sim = simulation.Simulation()
+        # iterate over creatures and run in simulation
+        for cr in pop.creatures:
+            sim.run_creature(cr)
+        dists = [cr.get_distance_travelled() for cr in pop.creatures]
+        print(dists)
+        self.assertIsNotNone(dists)
 
 
 unittest.main()        
