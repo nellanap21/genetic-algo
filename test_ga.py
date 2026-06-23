@@ -54,6 +54,7 @@ class TestGA(unittest.TestCase):
                 cr.set_dna(dna)
                 new_gen.append(cr)
             
+            # NOTE: replace the lowest with the elite
             new_gen[0] = elite # you are being replaced with elite
             csv_filename = str(generation) + "_elite.csv"
             genlib.Genome.to_csv(elite.dna, csv_filename)

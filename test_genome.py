@@ -133,7 +133,7 @@ class GenomeTest (unittest.TestCase):
     def test_point(self):
         g1 = np.array([[1.0,2.0,3.0], [4.0,5.0,6.0], [7.0,8.0,9.0]])
         # print(g1)
-        g2 = genome.Genome.point_mutate(g1, rate=0.5, amount=0.25)
+        g2 = genome.Genome.point_mutate(g1, rate=1, amount=0.25)
         # print(g2)
         self.assertFalse(np.array_equal(g1, g2))
 
