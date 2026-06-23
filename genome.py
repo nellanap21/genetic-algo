@@ -22,7 +22,7 @@ class Genome():
             "link_shape": {"scale":1},
             "link_length": {"scale":1},
             "link_radius": {"scale":1},
-            "link_recurrence": {"scale":4},
+            "link_recurrence": {"scale":2},
             "link_mass": {"scale":1},
             "joint_type": {"scale":1},
             "joint_parent": {"scale":1},

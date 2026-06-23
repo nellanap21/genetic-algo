@@ -11,8 +11,9 @@ class TestGA(unittest.TestCase):
     def testGA(self):
         pop = poplib.Population(pop_size=10, gene_count=3)
         sim = simlib.ThreadedSim(pool_size=8)
+        generations = 200
 
-        for generation in range(10):
+        for generation in range(generations):
             sim.eval_population(pop, 2400)
             # iterate all creatures in population, get distance and save in array
             fits = [cr.get_distance_travelled() for cr in pop.creatures]
@@ -56,8 +57,9 @@ class TestGA(unittest.TestCase):
             
             # NOTE: replace the lowest with the elite
             new_gen[0] = elite # you are being replaced with elite
-            csv_filename = str(generation) + "_elite.csv"
-            genlib.Genome.to_csv(elite.dna, csv_filename)
+            if generation > generations - 5:
+                csv_filename = "elite" + str(generation) + ".csv"
+                genlib.Genome.to_csv(elite.dna, csv_filename)
             pop.creatures = new_gen
 
 
