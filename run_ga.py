@@ -9,7 +9,7 @@ import numpy as np
 def run_ga():
     pop = poplib.Population(pop_size=10, gene_count=3)
     sim = simlib.ThreadedSim(pool_size=8)
-    generations = 20
+    generations = 100
 
     for generation in range(generations):
         sim.eval_population(pop, 2400)
@@ -24,15 +24,6 @@ def run_ga():
         )
         fitmap = poplib.Population.get_fitness_map(fits)
 
-        # print(generation, np.max(fits), np.mean(fits))
-
-        # class version of elitism does not reset create state
-        # fmax = np.max(fits) # find highest dist travelled
-        # # get creature with highest dist travelled
-        # for cr in pop.creatures:
-        #     if cr.get_distance_travelled() == fmax:
-        #         elite = cr
-        #         break
 
         # ELITISM
         best_ind = np.argmax(fits)

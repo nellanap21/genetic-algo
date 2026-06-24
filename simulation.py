@@ -1,5 +1,6 @@
 import pybullet as p
 from multiprocessing import Pool
+import environment as envt
 
 class Simulation():
     def __init__(self, sim_id=0):
@@ -16,9 +17,9 @@ class Simulation():
         # set to false, so it won't reuse same file
         p.setPhysicsEngineParameter(enableFileCaching=0, physicsClientId=pid) 
 
-        # add floor
-        plane_shape = p.createCollisionShape(p.GEOM_PLANE, physicsClientId=pid)
-        floor = p.createMultiBody(plane_shape, plane_shape, physicsClientId=pid)
+        # add arena
+        arena_size = 20
+        envt.make_arena(arena_size=arena_size)
 
         #xml_file = 'temp' + str(self.sim_id) + '.urdf'
         xml_file = f"temp/temp{self.sim_id}.urdf"
@@ -100,59 +101,6 @@ class ThreadedSim():
         #     print(cr.get_distance_travelled())
 
         pop.creatures = new_creatures
-
-# code from video that does not work
-# class ThreadedSim():
-#     def __init__(self, pool_size):
-#         self.sims = [Simulation(i) for i in range(pool_size)]
-
-#     # no state, doesn't need to access self
-#     @staticmethod
-#     def static_run_creature(sim, cr, iterations):
-#         sim.run_creature(cr, iterations)
-#         # in threaded mode, in multiprocessor mode, 
-#         # it's going to create a copy of the creature, 
-#         # so it passes by value rather than by reference. 
-#         # so need to return creature
-#         return cr 
-
-#     def eval_population(self, pop, iterations):
-#         pool_args = [] # mega array
-#         start_ind = 0
-#         pool_size = len(self.sims)
-#         # outer loop creates whole array
-#         while start_ind < len(pop.creatures): 
-#             this_pool_args = []
-#             # inner loop creates iteration
-#             for i in range(start_ind, start_ind + pool_size):
-#                 if i == len(pop.creatures): # the end
-#                     break
-#                 # work out the sim ind
-#                 sim_ind = i % len(self.sims)
-#                 print("eval_pop: c ind", start_ind, "sim_ind", sim_ind)
-
-#                 this_pool_args.append([
-#                     self.sims[sim_ind],
-#                     pop.creatures[i],
-#                     iterations]
-#                 )
-#             pool_args.append(this_pool_args)
-#             start_ind = start_ind + pool_size
-
-
-#         new_creatures = []
-#         for pool_argset in pool_args:
-#             # pool from python api that runs process in 
-#             with Pool(pool_size) as p:
-#                 # it works on a copy of the creatures, so receive
-#                 creatures = p.starmap(ThreadedSim.static_run_creature, pool_argset)
-#                 # and now put those creatures back into the main
-#                 # self.creatures array
-#                 new_creatures.extend(creatures)
-#         # for interest, print
-#         for cr in new_creatures:
-#             print(cr.get_distance_travelled())
-#         pop.creatures = new_creatures
 
 
 

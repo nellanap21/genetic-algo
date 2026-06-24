@@ -1,4 +1,7 @@
-# from terminal, type this command: ipython 
+# from terminal, type this command: 
+# > ipython
+# > import pybullet as p
+# > p.connect(p.GUI) 
 # within ipython, type following command: run motor_test.py
 
 import pybullet as p
@@ -8,6 +11,8 @@ import creature
 import genome as genlib
 import sys
 import os
+import environment as envt
+
 
 def main(csv_file):
     assert os.path.exists(csv_file), "Tried to load " + csv_file + "but it does not exist"
@@ -16,9 +21,9 @@ def main(csv_file):
     p.setPhysicsEngineParameter(enableFileCaching=0)
     p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
 
-    # add floor
-    plane_shape = p.createCollisionShape(p.GEOM_PLANE)
-    floor = p.createMultiBody(plane_shape, plane_shape)
+    # add arena
+    arena_size = 20
+    envt.make_arena(arena_size=arena_size)
 
     # set gravity
     p.setGravity(0, 0, -10)
