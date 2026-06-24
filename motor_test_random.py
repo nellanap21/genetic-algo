@@ -5,7 +5,7 @@ import time
 
 import random
 ## ... usual starter code to create a sim and floor
-#p.connect(p.GUI)
+p.connect(p.GUI)
 p.setPhysicsEngineParameter(enableFileCaching=0)
 p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
 plane_shape = p.createCollisionShape(p.GEOM_PLANE)
