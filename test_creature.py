@@ -27,10 +27,10 @@ class TestCreature(unittest.TestCase):
         c = creature.Creature(gene_count=20)
         xml_str = c.to_xml()
 
-        with open('test.urdf', 'w') as f:
+        with open('temp/test.urdf', 'w') as f:
             f.write(xml_str)
         p.connect(p.DIRECT)
-        cid = p.loadURDF('test.urdf')
+        cid = p.loadURDF('temp/test.urdf')
         self.assertIsNotNone(cid)
 
     def testRadial(self):
@@ -42,7 +42,7 @@ class TestCreature(unittest.TestCase):
         c.flat_links = links
         c.get_expanded_links()
         xml_str = c.to_xml()
-        with open('test_radial.urdf', 'w') as f:
+        with open('temp/test_radial.urdf', 'w') as f:
             f.write('<?xml version="1.0"?>' + "\n" + xml_str)
 
     def testMotor(self):

@@ -16,10 +16,10 @@ p.setRealTimeSimulation(1)
 # generate a random creature
 cr = creature.Creature(gene_count=3)
 # save it to XML
-with open('test.urdf','w') as f:
+with open('temp/test.urdf','w') as f:
     f.write(cr.to_xml())
 # load it into the sim
-rob1 = p.loadURDF('test.urdf')
+rob1 = p.loadURDF('temp/test.urdf')
 
 # iterate
 step = 0

@@ -20,7 +20,8 @@ class Simulation():
         plane_shape = p.createCollisionShape(p.GEOM_PLANE, physicsClientId=pid)
         floor = p.createMultiBody(plane_shape, plane_shape, physicsClientId=pid)
 
-        xml_file = 'temp' + str(self.sim_id) + '.urdf'
+        #xml_file = 'temp' + str(self.sim_id) + '.urdf'
+        xml_file = f"temp/temp{self.sim_id}.urdf"
         xml_str = cr.to_xml()
         with open(xml_file, 'w') as f:
             f.write(xml_str)

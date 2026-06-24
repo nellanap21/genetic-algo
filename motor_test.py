@@ -20,11 +20,11 @@ p.setGravity(0, 0, -10)
 
 c = creature.Creature(gene_count = 5)
 
-with open('test.urdf', 'w') as f:
+with open('temp/test.urdf', 'w') as f:
     c.get_expanded_links()
     f.write(c.to_xml())
 
-cid = p.loadURDF('test.urdf')
+cid = p.loadURDF('temp/test.urdf')
 
 # assume creature sitting at origin
 c.update_position([0,0,0])

@@ -29,11 +29,11 @@ def main(csv_file):
     c.set_dna(dna)
 
     # save it to XML
-    with open('test.urdf', 'w') as f:
+    with open('temp/test.urdf', 'w') as f:
         c.get_expanded_links()
         f.write(c.to_xml())
     # load it into the sim
-    cid = p.loadURDF('test.urdf')
+    cid = p.loadURDF('temp/test.urdf')
 
     # assume creature sitting at origin
     c.update_position([0,0,0])
