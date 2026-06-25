@@ -20,22 +20,22 @@ class Genome():
         # allows you to pull value out of a gene by name
         gene_spec = {
             "link_shape": {"scale":1},
-            "link_length": {"scale":1},
-            "link_radius": {"scale":1},
-            "link_recurrence": {"scale":2},
+            "link_length": {"scale":0.75},
+            "link_radius": {"scale":0.25},
+            "link_recurrence": {"scale":1},
             "link_mass": {"scale":1},
             "joint_type": {"scale":1},
             "joint_parent": {"scale":1},
             "joint_axis_xyz": {"scale":1},
-            "joint_origin_rpy_1": {"scale": np.pi * 2}, 
-            "joint_origin_rpy_2": {"scale": np.pi * 2}, 
-            "joint_origin_rpy_3":{"scale": np.pi * 2}, 
-            "joint_origin_xyz_1": {"scale": 1},
-            "joint_origin_xyz_2": {"scale": 1},
-            "joint_origin_xyz_3":{"scale": 1},
+            "joint_origin_rpy_1": {"scale": np.pi}, 
+            "joint_origin_rpy_2": {"scale": np.pi}, 
+            "joint_origin_rpy_3":{"scale": np.pi}, 
+            "joint_origin_xyz_1": {"scale": 0.5},
+            "joint_origin_xyz_2": {"scale": 0.5},
+            "joint_origin_xyz_3":{"scale": 0.5},
             "control_waveform": {"scale": 1},
-            "control_amp": {"scale": 0.25},
-            "control_freq":{"scale": 1}
+            "control_amp": {"scale": 1.0},
+            "control_freq":{"scale": 0.25}
         }
 
         ind = 0
@@ -100,6 +100,7 @@ class Genome():
         for gdict in gdicts:
             link_name = str(link_ind)
             parent_ind = gdict["joint_parent"] * len(parent_names)
+            parent_ind = min(parent_ind, len(parent_names) - 1) # to ensure parent_ind is not out or ange
             parent_name = parent_names[int(parent_ind)]
             # print("available parents: ", parent_names, "chose", parent_name)
             recur = gdict["link_recurrence"]
@@ -148,6 +149,16 @@ class Genome():
 
     @staticmethod
     def point_mutate(genes, rate, amount):
+        """
+        Randomly mutates values within genome
+        Inputs
+        genes:  the genome to mutate
+        rate:   probability 0-1 each gene will be mutated
+        amount: max magnitude of the mutation. value is adjusted to be 
+                random amount between -amount/2 and +amount/2
+        Outputs
+        copy of genome with random point mutations
+        """
         new_genes = copy.copy(genes)
         for gene in new_genes:
             # if rate is high, the more likely to mutate
@@ -155,11 +166,11 @@ class Genome():
                 ind = np.random.randint(len(gene)) # choose one gene
 
                 # these next two lines are from videos
-                # r = (np.random.rand() - 0.5) * amount
-                #gene[ind] = gene[ind] + r
-
+                r = (np.random.rand() - 0.5) * amount
+                gene[ind] = gene[ind] + r
+                gene[ind] = np.clip(gene[ind], 0, 1)
                 # take the current value, multiply by random 0-1, multiply by amount
-                gene[ind] = gene[ind] * np.random.rand() * amount
+                # gene[ind] = gene[ind] * np.random.rand() * amount
         return new_genes
 
     @staticmethod

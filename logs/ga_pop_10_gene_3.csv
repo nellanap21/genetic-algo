@@ -1,0 +1,6 @@
+generation,stage,best_fitness,mean_fitness,max_links,mean_links,population,gene_count
+0,walking,2.801,1.288,5,3.500,10,3
+1,walking,2.801,1.323,6,3.900,10,3
+2,walking,2.801,1.449,9,4.600,10,3
+3,walking,2.801,1.738,9,6.200,10,3
+4,walking,4.538,1.946,9,6.400,10,3

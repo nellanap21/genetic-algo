@@ -4,34 +4,47 @@ import creature as crlib
 import genome as genlib
 import numpy as np
 
+# genetic algorithm settings
+POPULATION = 20
+GENE_COUNT = 5
+SIM_LENGTH = 2400
+GENERATIONS = 100
 
+# genome settings
+POINT_MUTATION_RATE = 0.1
+POINT_MUTATION_AMOUNT = 0.1
+GROW_RATE = 0.1
+SHRINK_RATE = 0.05
+
+
+logs = ["generation,stage,best_fitness,mean_fitness,max_links,mean_links,population,gene_count\n"]
 
 def run_ga():
-    pop = poplib.Population(pop_size=10, gene_count=3)
+    pop = poplib.Population(pop_size=POPULATION, gene_count=GENE_COUNT)
     sim = simlib.ThreadedSim(pool_size=8)
-    generations = 100
+    generations = GENERATIONS
 
     for generation in range(generations):
-        sim.eval_population(pop, 2400)
+        sim.eval_population(pop, SIM_LENGTH)
         # iterate all creatures in population, get distance and save in array
         if generation < generations / 2:
             fits = [cr.get_distance_travelled() for cr in pop.creatures]
+            links = [len(cr.get_expanded_links()) for cr in pop.creatures]
             fitness_scores = fits
-            print(
-                generation, 
-                "stage: walking",
-                "fittest: ", np.round(np.max(fits), 3), 
-                "mean:", np.round(np.mean(fits), 3), 
+            logs.append(
+                f"{generation},walking,"
+                f"{np.max(fitness_scores):.3f},"
+                f"{np.mean(fitness_scores):.3f},"
+                f"{np.max(links)},"
+                f"{np.mean(links):.3f},"
+                f"{POPULATION},"
+                f"{GENE_COUNT}\n"
+
             )
         else:
             fits = [cr.get_distance_to_peak() for cr in pop.creatures]
             fitness_scores = [1.0 / (1.0 + f) for f in fits]
-            print(
-                generation, 
-                "stage: climbing",
-                "fittest: ", np.round(np.min(fits), 3), 
-                "mean:", np.round(np.mean(fits), 3), 
-            )
+
 
         fitmap = poplib.Population.get_fitness_map(fitness_scores)
 
@@ -57,10 +70,15 @@ def run_ga():
         
         # NOTE: replace the lowest with the elite
         new_gen[0] = elite # you are being replaced with elite
-        if generation % 10 == 0:
+        if generation % (generations / 10) == 0:
+            #print(generation)
             csv_filename = f"elites/elite{generation}.csv"
             genlib.Genome.to_csv(elite.dna, csv_filename)
         pop.creatures = new_gen
 
 if __name__ == "__main__":
     run_ga()
+
+    filename = f"logs/ga_pop_{POPULATION}_gene_{GENE_COUNT}.csv"
+    with open(filename, "w") as f:
+        f.writelines(logs)

@@ -21,7 +21,6 @@ class Simulation():
         arena_size = 20
         envt.make_arena(arena_size=arena_size)
 
-        #xml_file = 'temp' + str(self.sim_id) + '.urdf'
         xml_file = f"temp/temp{self.sim_id}.urdf"
         xml_str = cr.to_xml()
         with open(xml_file, 'w') as f:
