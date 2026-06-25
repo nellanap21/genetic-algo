@@ -6,29 +6,33 @@ import numpy as np
 
 # genetic algorithm settings
 POPULATION = 20
-GENE_COUNT = 5
+GENE_COUNT = 3
 SIM_LENGTH = 2400
-GENERATIONS = 100
+GENERATIONS = 400
 
 # genome settings
 POINT_MUTATION_RATE = 0.1
 POINT_MUTATION_AMOUNT = 0.1
-GROW_RATE = 0.1
-SHRINK_RATE = 0.05
+GROW_RATE = 0.05
+SHRINK_RATE = 0.1
 
 
-logs = ["generation,stage,best_fitness,mean_fitness,max_links,mean_links,population,gene_count\n"]
+logs = ["generation,stage,best_fitness,mean_fitness,max_links,mean_links\n"]
 
 def run_ga():
     pop = poplib.Population(pop_size=POPULATION, gene_count=GENE_COUNT)
-    sim = simlib.ThreadedSim(pool_size=8)
+    sim = simlib.ThreadedSim(pool_size=6)
     generations = GENERATIONS
 
     for generation in range(generations):
         sim.eval_population(pop, SIM_LENGTH)
         # iterate all creatures in population, get distance and save in array
         if generation < generations / 2:
-            fits = [cr.get_distance_travelled() for cr in pop.creatures]
+            fits = [
+                # add penalty based on number of links
+                cr.get_distance_travelled() / (1 + 0.05 * len(cr.get_expanded_links()))
+                for cr in pop.creatures
+            ]
             links = [len(cr.get_expanded_links()) for cr in pop.creatures]
             fitness_scores = fits
             logs.append(
@@ -36,14 +40,19 @@ def run_ga():
                 f"{np.max(fitness_scores):.3f},"
                 f"{np.mean(fitness_scores):.3f},"
                 f"{np.max(links)},"
-                f"{np.mean(links):.3f},"
-                f"{POPULATION},"
-                f"{GENE_COUNT}\n"
-
+                f"{np.mean(links):.3f}\n"
             )
         else:
             fits = [cr.get_distance_to_peak() for cr in pop.creatures]
+            links = [len(cr.get_expanded_links()) for cr in pop.creatures]
             fitness_scores = [1.0 / (1.0 + f) for f in fits]
+            logs.append(
+                f"{generation},climbing,"
+                f"{np.max(fitness_scores):.3f},"
+                f"{np.mean(fitness_scores):.3f},"
+                f"{np.max(links)},"
+                f"{np.mean(links):.3f}\n"
+            )
 
 
         fitmap = poplib.Population.get_fitness_map(fitness_scores)
@@ -61,9 +70,9 @@ def run_ga():
             p2_ind = poplib.Population.select_parent(fitmap)
             dna = genlib.Genome.crossover(pop.creatures[p1_ind].dna,
                                         pop.creatures[p2_ind].dna)
-            dna = genlib.Genome.point_mutate(dna, 0.1, 0.25)
-            dna = genlib.Genome.grow_mutate(dna, 0.25)
-            dna = genlib.Genome.shrink_mutate(dna, 0.25)
+            dna = genlib.Genome.point_mutate(dna, POINT_MUTATION_RATE, POINT_MUTATION_AMOUNT)
+            dna = genlib.Genome.grow_mutate(dna, GROW_RATE)
+            dna = genlib.Genome.shrink_mutate(dna, SHRINK_RATE)
             cr = crlib.Creature(1)
             cr.set_dna(dna)
             new_gen.append(cr)
@@ -79,6 +88,6 @@ def run_ga():
 if __name__ == "__main__":
     run_ga()
 
-    filename = f"logs/ga_pop_{POPULATION}_gene_{GENE_COUNT}.csv"
+    filename = f"logs/gens_{GENERATIONS}_sim_{SIM_LENGTH}_pop_{POPULATION}_gene_{GENE_COUNT}.csv"
     with open(filename, "w") as f:
         f.writelines(logs)
