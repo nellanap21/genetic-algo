@@ -8,13 +8,13 @@ import numpy as np
 POPULATION = 20
 GENE_COUNT = 3
 SIM_LENGTH = 2400
-GENERATIONS = 400
+GENERATIONS = 100
 
 # genome settings
-POINT_MUTATION_RATE = 0.1
-POINT_MUTATION_AMOUNT = 0.1
-GROW_RATE = 0.05
-SHRINK_RATE = 0.1
+POINT_MUTATION_RATE = 0.15 # allows for fine tuning of motor controls
+POINT_MUTATION_AMOUNT = 0.15
+GROW_RATE = 0.02    # discourage evolving extra limbs
+SHRINK_RATE = 0.15  # removes accidental extra limbs
 
 
 logs = ["generation,stage,best_fitness,mean_fitness,max_links,mean_links\n"]
@@ -74,7 +74,7 @@ def run_ga():
             # tournament style selection
             p1_ind = poplib.Population.select_parent_tournament(fitness_scores, tournament_size=3)
             p2_ind = poplib.Population.select_parent_tournament(fitness_scores, tournament_size=3)
-            
+
             dna = genlib.Genome.crossover(pop.creatures[p1_ind].dna,
                                         pop.creatures[p2_ind].dna)
             dna = genlib.Genome.point_mutate(dna, POINT_MUTATION_RATE, POINT_MUTATION_AMOUNT)
