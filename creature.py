@@ -125,8 +125,8 @@ class Creature:
         # updates the start_position and last_position variables
         if self.start_position == None:
             self.start_position = pos
-        else:
-            self.last_position = pos
+
+        self.last_position = pos
 
     def get_distance_to_peak(self):
         # this measures the overall distance from origin
@@ -138,5 +138,13 @@ class Creature:
 
         # this measures total movement even back and forth
         return self.dist
+
+    def get_distance_travelled(self):
+        # this measures the overall distance from origin
+        if self.start_position == None or self.last_position == None:
+            return 0
+        p1 = np.array(self.start_position)
+        p2 = np.array(self.last_position)
+        return np.linalg.norm(p1-p2)
 
 

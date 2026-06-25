@@ -31,7 +31,8 @@ class Simulation():
         cid = p.loadURDF(xml_file, physicsClientId=pid)
 
         # sets position to slightly above the ground to fix the flying problem
-        p.resetBasePositionAndOrientation(cid, [0,0,3], [0,0,0,1], physicsClientId=pid)
+        # start at side to have consistent starting position
+        p.resetBasePositionAndOrientation(cid, [0,-8,1], [0,0,0,2], physicsClientId=pid)
 
         for step in range(iterations):
             p.stepSimulation(physicsClientId=pid)

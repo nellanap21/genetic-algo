@@ -21,6 +21,13 @@ def main(csv_file):
     p.setPhysicsEngineParameter(enableFileCaching=0)
     p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
 
+    p.resetDebugVisualizerCamera(
+        cameraDistance=15,
+        cameraYaw=45,
+        cameraPitch=-35,
+        cameraTargetPosition=[0, 0, 2]
+    )
+
     # add arena
     arena_size = 20
     envt.make_arena(arena_size=arena_size)
@@ -44,7 +51,7 @@ def main(csv_file):
     c.update_position([0,0,0])
 
     # sets position to slightly above the ground to fix the flying problem
-    p.resetBasePositionAndOrientation(cid, [-8, 0, 1], [0,0,0,1])
+    p.resetBasePositionAndOrientation(cid, [0, -8, 1], [0,0,0,2])
 
     # needed for mac users to interact
     while True:
