@@ -66,8 +66,15 @@ def run_ga():
         # make new generation
         new_gen = []
         for cid in range(len(pop.creatures)):
-            p1_ind = poplib.Population.select_parent(fitmap)
-            p2_ind = poplib.Population.select_parent(fitmap)
+
+            # roulette wheel selection
+            # p1_ind = poplib.Population.select_parent(fitmap)
+            # p2_ind = poplib.Population.select_parent(fitmap)
+
+            # tournament style selection
+            p1_ind = poplib.Population.select_parent_tournament(fitness_scores, tournament_size=3)
+            p2_ind = poplib.Population.select_parent_tournament(fitness_scores, tournament_size=3)
+            
             dna = genlib.Genome.crossover(pop.creatures[p1_ind].dna,
                                         pop.creatures[p2_ind].dna)
             dna = genlib.Genome.point_mutate(dna, POINT_MUTATION_RATE, POINT_MUTATION_AMOUNT)

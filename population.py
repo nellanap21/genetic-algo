@@ -24,3 +24,30 @@ class Population():
             if r <= fitmap[i]: # select if fitness is big enough
                 return i
 
+    @staticmethod
+    def select_parent_tournament(fitness_scores, tournament_size=3):
+        """
+        Selects one parent using tournament selection.
+
+        Parameters:
+            fitness_scores (list or np.ndarray):
+                Fitness score for each creature. Higher is better.
+
+            tournament_size (int):
+                Number of random creatures competing in the tournament.
+
+        Returns:
+            int:
+                Index of the winning parent.
+        """
+        # select tournament competitors
+        competitors = np.random.choice(
+            len(fitness_scores),
+            size=tournament_size,
+            replace=False
+        )
+
+        # choose the best from the competitors
+        best_index = competitors[np.argmax([fitness_scores[i] for i in competitors])]
+
+        return best_index
