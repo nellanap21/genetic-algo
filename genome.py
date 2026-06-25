@@ -320,7 +320,7 @@ class URDFLink:
         inertia_tag.setAttribute("izz", "0.03")
         inertia_tag.setAttribute("ixy", "0")
         inertia_tag.setAttribute("ixz", "0")
-        inertia_tag.setAttribute("iyx", "0")
+        inertia_tag.setAttribute("iyz", "0")
         inertial_tag.appendChild(mass_tag)
         inertial_tag.appendChild(inertia_tag)
         
@@ -360,8 +360,8 @@ class URDFLink:
         limit_tag = adom.createElement("limit")
         # effort upper lower velocity
         limit_tag.setAttribute("effort", "1")
-        limit_tag.setAttribute("upper", "-3.1415")
-        limit_tag.setAttribute("lower", "3.1415")
+        limit_tag.setAttribute("upper", "3.1415")
+        limit_tag.setAttribute("lower", "-3.1415")
         limit_tag.setAttribute("velocity", "1")
         # <origin rpy="0 0 0" xyz="0 0.5 0"/>
         orig_tag = adom.createElement("origin")

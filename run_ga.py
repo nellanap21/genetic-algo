@@ -6,15 +6,15 @@ import numpy as np
 
 # genetic algorithm settings
 POPULATION = 20
-GENE_COUNT = 3
-SIM_LENGTH = 2400
-GENERATIONS = 400
+SIM_LENGTH = 1200
+GENERATIONS = 100
 
 # genome settings
-POINT_MUTATION_RATE = 0.15 # allows for fine tuning of motor controls
-POINT_MUTATION_AMOUNT = 0.15
-GROW_RATE = 0.02    # discourage evolving extra limbs
-SHRINK_RATE = 0.15  # removes accidental extra limbs
+GENE_COUNT = 3                  # Number of genes/limbs in creature
+POINT_MUTATION_RATE = 0.1       # Percent chance of mutating a gene
+POINT_MUTATION_AMOUNT = 0.01
+GROW_RATE = 0.02                # discourage evolving extra limbs
+SHRINK_RATE = 0.02              # removes accidental extra limbs
 
 
 logs = ["generation,stage,best_fitness,mean_fitness,max_links,mean_links\n"]
