@@ -56,6 +56,7 @@ class Creature:
         self.get_expanded_links()
         self.start_position = None
         self.last_position = None
+        self.dist = 0
 
 
     def get_flat_links(self):
@@ -112,20 +113,22 @@ class Creature:
         return self.motors
 
     def update_position(self, pos):
-        # this measures total distance moved
-        # even if it is back and forth
-        if self.last_position != None:
-            p1 = np.array(self.last_position)
-            p2 = np.array(pos)
-            dist = np.linalg.norm(p1-p2)   
-            self.dist = self.dist + dist
+        mountain_peak = np.array([0.0, 0.0, 4.0])
+        #if self.last_position != None:
+        p = np.array(pos)
+        self.dist = np.linalg.norm(p - mountain_peak)
+        # p1 = np.array(self.last_position)
+        # p2 = np.array(pos)
+        # dist = np.linalg.norm(p1-p2)   
+        # self.dist = self.dist + dist
 
+        # updates the start_position and last_position variables
         if self.start_position == None:
             self.start_position = pos
         else:
             self.last_position = pos
 
-    def get_distance_travelled(self):
+    def get_distance_to_peak(self):
         # this measures the overall distance from origin
         # if self.start_position == None or self.last_position == None:
         #     return 0

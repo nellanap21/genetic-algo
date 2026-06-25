@@ -44,7 +44,7 @@ def main(csv_file):
     c.update_position([0,0,0])
 
     # sets position to slightly above the ground to fix the flying problem
-    p.resetBasePositionAndOrientation(cid, [0,0,3], [0,0,0,1])
+    p.resetBasePositionAndOrientation(cid, [-8, 0, 1], [0,0,0,1])
 
     # needed for mac users to interact
     while True:
@@ -58,8 +58,9 @@ def main(csv_file):
 
         pos, orn = p.getBasePositionAndOrientation(cid)
         c.update_position(pos)
-        #print(c.get_distance_travelled())
-        p.resetDebugVisualizerCamera(5, 0, 200, pos)
+
+        # automatically sets the camera to follow the creature
+        #p.resetDebugVisualizerCamera(5, 0, 200, pos)
 
         p.stepSimulation()
         # time.sleep(0.1) # 10 times a second

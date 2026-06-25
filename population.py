@@ -24,13 +24,3 @@ class Population():
             if r <= fitmap[i]: # select if fitness is big enough
                 return i
 
-
-
-
-
-
-
-
-
-
-

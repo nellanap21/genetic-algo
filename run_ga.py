@@ -14,19 +14,21 @@ def run_ga():
     for generation in range(generations):
         sim.eval_population(pop, 2400)
         # iterate all creatures in population, get distance and save in array
-        fits = [cr.get_distance_travelled() for cr in pop.creatures]
+        fits = [cr.get_distance_to_peak() for cr in pop.creatures]
         links = [len(cr.get_expanded_links()) for cr in pop.creatures]
         print(
             generation, 
-            "fittest: ", np.round(np.max(fits), 3), 
+            "fittest: ", np.round(np.min(fits), 3), 
             "mean:", np.round(np.mean(fits), 3), 
             "mean links", np.round(np.mean(links))
         )
-        fitmap = poplib.Population.get_fitness_map(fits)
+
+        fitness_scores = [1.0 / (1.0 + f) for f in fits]
+        fitmap = poplib.Population.get_fitness_map(fitness_scores)
 
 
         # ELITISM
-        best_ind = np.argmax(fits)
+        best_ind = np.argmin(fits)
         elite = crlib.Creature(1)
         elite.set_dna(np.copy(pop.creatures[best_ind].dna))
 
@@ -50,12 +52,6 @@ def run_ga():
             csv_filename = f"elites/elite{generation}.csv"
             genlib.Genome.to_csv(elite.dna, csv_filename)
         pop.creatures = new_gen
-
-
-
-
-
-
 
 if __name__ == "__main__":
     run_ga()

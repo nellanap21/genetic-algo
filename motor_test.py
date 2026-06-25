@@ -44,7 +44,7 @@ while True:
 
     pos, orn = p.getBasePositionAndOrientation(cid)
     c.update_position(pos)
-    print(c.get_distance_travelled())
+    print(c.get_distance_to_peak())
 
     p.stepSimulation()
     # time.sleep(0.1) # 10 times a second

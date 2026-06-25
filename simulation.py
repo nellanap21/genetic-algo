@@ -98,7 +98,7 @@ class ThreadedSim():
             )
 
         # for cr in new_creatures:
-        #     print(cr.get_distance_travelled())
+        #     print(cr.get_distance_to_peak())
 
         pop.creatures = new_creatures
 

@@ -21,3 +21,9 @@ def make_arena(arena_size=10, wall_height=1):
 
     p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_collision_shape, baseVisualShapeIndex=wall_visual_shape, basePosition=[arena_size/2, 0, wall_height/2])
     p.createMultiBody(baseMass=0, baseCollisionShapeIndex=wall_collision_shape, baseVisualShapeIndex=wall_visual_shape, basePosition=[-arena_size/2, 0, wall_height/2])
+
+    # add mountain
+    mountain_position = (0, 0, -1)  # Adjust as needed
+    mountain_orientation = p.getQuaternionFromEuler((0, 0, 0))
+    p.setAdditionalSearchPath('shapes/')
+    mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)

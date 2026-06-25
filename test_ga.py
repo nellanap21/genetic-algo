@@ -16,7 +16,7 @@ class TestGA(unittest.TestCase):
         for generation in range(generations):
             sim.eval_population(pop, 2400)
             # iterate all creatures in population, get distance and save in array
-            fits = [cr.get_distance_travelled() for cr in pop.creatures]
+            fits = [cr.get_distance_to_peak() for cr in pop.creatures]
             links = [len(cr.get_expanded_links()) for cr in pop.creatures]
             print(
                 generation, 
@@ -27,14 +27,6 @@ class TestGA(unittest.TestCase):
             fitmap = poplib.Population.get_fitness_map(fits)
 
             # print(generation, np.max(fits), np.mean(fits))
-
-            # class version of elitism does not reset create state
-            # fmax = np.max(fits) # find highest dist travelled
-            # # get creature with highest dist travelled
-            # for cr in pop.creatures:
-            #     if cr.get_distance_travelled() == fmax:
-            #         elite = cr
-            #         break
 
             # ELITISM
             best_ind = np.argmax(fits)
