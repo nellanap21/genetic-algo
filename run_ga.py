@@ -8,7 +8,7 @@ import numpy as np
 POPULATION = 20
 GENE_COUNT = 3
 SIM_LENGTH = 2400
-GENERATIONS = 100
+GENERATIONS = 400
 
 # genome settings
 POINT_MUTATION_RATE = 0.15 # allows for fine tuning of motor controls
@@ -18,6 +18,19 @@ SHRINK_RATE = 0.15  # removes accidental extra limbs
 
 
 logs = ["generation,stage,best_fitness,mean_fitness,max_links,mean_links\n"]
+
+
+
+def fatness_penalty(cr):
+
+    links = cr.get_expanded_links()
+    penalties = []
+    for link in links:
+        length = max(link.link_length, 0.001)
+        radius = link.link_radius
+        fatness = radius / length
+        penalties.append(fatness)
+    return np.mean(penalties)
 
 def run_ga():
     pop = poplib.Population(pop_size=POPULATION, gene_count=GENE_COUNT)
@@ -29,8 +42,11 @@ def run_ga():
         # iterate all creatures in population, get distance and save in array
         if generation < generations / 2:
             fits = [
-                # add penalty based on number of links
-                cr.get_distance_travelled() / (1 + 0.05 * len(cr.get_expanded_links()))
+                cr.get_distance_travelled() / (
+                    1
+                    + 0.05 * len(cr.get_expanded_links())
+                    + 0.5 * fatness_penalty(cr)
+                )
                 for cr in pop.creatures
             ]
             links = [len(cr.get_expanded_links()) for cr in pop.creatures]
@@ -91,6 +107,8 @@ def run_ga():
             csv_filename = f"elites/elite{generation}.csv"
             genlib.Genome.to_csv(elite.dna, csv_filename)
         pop.creatures = new_gen
+
+
 
 if __name__ == "__main__":
     run_ga()
