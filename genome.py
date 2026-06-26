@@ -21,7 +21,7 @@ class Genome():
         gene_spec = {
             "link_shape": {"scale":1},
             "link_length": {"scale":0.75},
-            "link_radius": {"scale":0.25},
+            "link_radius": {"scale":0.15},
             "link_recurrence": {"scale":1},
             "link_mass": {"scale":1},
             "joint_type": {"scale":1},
@@ -34,8 +34,8 @@ class Genome():
             "joint_origin_xyz_2": {"scale": 0.5},
             "joint_origin_xyz_3":{"scale": 0.5},
             "control_waveform": {"scale": 1},
-            "control_amp": {"scale": 1.0},
-            "control_freq":{"scale": 0.25}
+            "control_amp": {"scale": 2.0},
+            "control_freq":{"scale": 0.4}
         }
 
         ind = 0
@@ -99,16 +99,24 @@ class Genome():
         parent_names = [str(link_ind)] # start with just number 0
         for gdict in gdicts:
             link_name = str(link_ind)
+
+            # links can connect any previous link
             parent_ind = gdict["joint_parent"] * len(parent_names)
             parent_ind = min(parent_ind, len(parent_names) - 1) # to ensure parent_ind is not out or ange
             parent_name = parent_names[int(parent_ind)]
+            
+            # links can only connect to first link
+            # if link_ind == 0:
+            #     parent_name = "None"
+            # else:
+            #     parent_name = "0"
             # print("available parents: ", parent_names, "chose", parent_name)
             recur = gdict["link_recurrence"]
             link = URDFLink(name=link_name, 
                             parent_name=parent_name, 
                             recur=recur+1,
-                            link_length=gdict["link_length"],
-                            link_radius=gdict["link_radius"],
+                            link_length=0.5 + gdict["link_length"],
+                            link_radius=0.03 + gdict["link_radius"],
                             link_mass=gdict["link_mass"],
                             joint_type=gdict["joint_type"],
                             joint_parent=gdict["joint_parent"],
@@ -120,8 +128,8 @@ class Genome():
                             joint_origin_xyz_2=gdict["joint_origin_xyz_2"],
                             joint_origin_xyz_3=gdict["joint_origin_xyz_3"],
                             control_waveform=gdict["control_waveform"],
-                            control_amp=gdict["control_amp"],
-                            control_freq=gdict["control_freq"])
+                            control_amp=0.5 + gdict["control_amp"],
+                            control_freq=0.05 + gdict["control_freq"])
             links.append(link)
             if link_ind != 0: # don't re-add the first link
                 parent_names.append(link_name)
@@ -224,10 +232,6 @@ class Genome():
 
 
 class URDFLink:
-    # OOP - creating wrapper which contains all the data i need to represent a link
-    # constructor which takes as its argument
-    # itself the instance of the object plus
-    # name, parent_name, recurrence level - assigns those
     def __init__(self, name, parent_name, recur, 
                  link_length=0.1,
                  link_radius=0.1,
@@ -266,23 +270,6 @@ class URDFLink:
         self.sibling_ind = 1
 
     def to_link_element(self, adom):
-        #         <link name="base_link">
-        #     <visual>
-        #       <geometry>
-        #         <cylinder length="0.6" radius="0.25"/>
-        #       </geometry>
-        #     </visual>
-        #     <collision>
-        #       <geometry>
-        #         <cylinder length="0.6" radius="0.25"/>
-        #       </geometry>
-        #     </collision>
-        #     <inertial>
-        # 	    <mass value="0.25"/>
-        # 	    <inertia ixx="0.0003" iyy="0.0003" izz="0.0003" ixy="0" ixz="0" iyz="0"/>
-        #     </inertial>
-        #   </link>
-  
         link_tag = adom.createElement("link")
         link_tag.setAttribute("name", self.name)
         vis_tag = adom.createElement("visual")
@@ -332,23 +319,14 @@ class URDFLink:
         return link_tag
 
     def to_joint_element(self, adom):
-        #           <joint name="base_to_sub2" type="revolute">
-        #     <parent link="base_link"/>
-        #     <child link="sub_link2"/>
-        #     <axis xyz="1 0 0"/>
-        #     <limit effort="10" upper="0" lower="10" velocity="1"/>
-        #     <origin rpy="0 0 0" xyz="0 0.5 0"/>
-        #   </joint>
         joint_tag = adom.createElement("joint")
         joint_tag.setAttribute("name", self.name + "_to_" + self.parent_name)
-        if self.joint_type >= 0.5:
-            joint_tag.setAttribute("type", "revolute")
-        else:
-            joint_tag.setAttribute("type", "revolute")
+        joint_tag.setAttribute("type", "revolute")
         parent_tag = adom.createElement("parent")
         parent_tag.setAttribute("link", self.parent_name)
         child_tag = adom.createElement("child")
         child_tag.setAttribute("link", self.name)
+        # controls axis of rotation x, y, or z
         axis_tag = adom.createElement("axis")
         if self.joint_axis_xyz <= 0.33:
             axis_tag.setAttribute("xyz", "1 0 0")
@@ -357,21 +335,27 @@ class URDFLink:
         if self.joint_axis_xyz > 0.66:
             axis_tag.setAttribute("xyz", "0 0 1")
         
+        # controls how much joint bends
         limit_tag = adom.createElement("limit")
-        # effort upper lower velocity
-        limit_tag.setAttribute("effort", "50")
         limit_tag.setAttribute("upper", "3.1415")
         limit_tag.setAttribute("lower", "-3.1415")
+
+        # control max joint effort
+        limit_tag.setAttribute("effort", "100")
+
+        # control max joint velocity
         limit_tag.setAttribute("velocity", "10")
-        # <origin rpy="0 0 0" xyz="0 0.5 0"/>
+
+        # transform from the parent link to the child link 
+        # joint is located at the origin of the child link
         orig_tag = adom.createElement("origin")
         
         # rotation will increase based on number of siblings
         rpy1 = self.joint_origin_rpy_1 * self.sibling_ind
-
         rpy = str(rpy1) + " " + str(self.joint_origin_rpy_2) + " " + str(self.joint_origin_rpy_3)
         orig_tag.setAttribute("rpy", rpy)
-        xyz = str(self.joint_origin_xyz_1) + " " + str(self.joint_origin_xyz_2) + " " + str(self.joint_origin_xyz_3)
+
+        xyz = str(self.joint_origin_xyz_1) + " " + str(self.joint_origin_xyz_2) + " " + str(self.link_length) # extend link out from origin
         orig_tag.setAttribute("xyz", xyz)
 
         joint_tag.appendChild(parent_tag)

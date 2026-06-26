@@ -79,23 +79,25 @@ class Creature:
         return self.exp_links
     
     def to_xml(self):
-        # NOTE: adding this assertion will break certain tests
-        # assert(self.exp_links != None), "creature: call get_exp_links before to_xml"
-
+        """
+        Convert a creature into URDF XML
+        """
         # make sure expanded links are available
         self.get_expanded_links()
         domimpl = getDOMImplementation()
         adom = domimpl.createDocument(None, "start", None)
         robot_tag = adom.createElement("robot")
+        # add for every link, add a <link> element
         for link in self.exp_links:
             robot_tag.appendChild(link.to_link_element(adom))
+        # for every link other than first, add a joint to existing link
         first = True
         for link in self.exp_links:
             if first: # skip the root node!
                 first = False
                 continue
             robot_tag.appendChild(link.to_joint_element(adom))
-        robot_tag.setAttribute("name", "pepe") # choose a name!
+        robot_tag.setAttribute("name", "climber") 
         return robot_tag.toprettyxml()
 
 
