@@ -53,12 +53,21 @@ class Simulation():
                                         physicsClientId=self.physicsClientId)):
             # get the motors of the creature
             m = cr.get_motors()[jid]
-            # set joint velocity to the output of motor
+
+            # position control
             p.setJointMotorControl2(cid, jid,
-                                    controlMode=p.VELOCITY_CONTROL,
+                                    controlMode=p.POSITION_CONTROL,
                                     targetVelocity=m.get_output(),
-                                    force = 50,
+                                    force = 100,
+                                    maxVelocity = 2,
                                     physicsClientId=self.physicsClientId)
+
+            # set joint velocity to the output of motor - velocity
+            # p.setJointMotorControl2(cid, jid,
+            #                         controlMode=p.VELOCITY_CONTROL,
+            #                         targetVelocity=m.get_output(),
+            #                         force = 50,
+            #                         physicsClientId=self.physicsClientId)
 
 
 class ThreadedSim():

@@ -10,24 +10,30 @@ class MotorType(Enum):
 class Motor():
     # self gives access to its own state
     def __init__(self, control_waveform, control_amp, control_freq):
-        if control_waveform <= 0.5:
-            self.motor_type = MotorType.PULSE
-        else:
-            self.motor_type = MotorType.SINE
 
-        self.amp = control_amp
-        self.freq = control_freq
+        # if control_waveform <= 0.5:
+        #     self.motor_type = MotorType.PULSE
+        # else:
+        #     self.motor_type = MotorType.SINE
+
+        self.motor_type = MotorType.SINE
+
+        
+        self.amp = min(control_amp, 1.2)
+
+        self.freq = max(control_freq, 0.03)
+
         self.phase = 0
 
     def get_output(self):
         # every time get_output is called, the phase of waveform changes
         self.phase = (self.phase + self.freq) % (np.pi * 2)
 
-        if self.motor_type == MotorType.PULSE:
-            if self.phase < np.pi:
-                output = 1
-            else:
-                output = -1
+        # if self.motor_type == MotorType.PULSE:
+        #     if self.phase < np.pi:
+        #         output = 1
+        #     else:
+        #         output = -1
 
         if self.motor_type == MotorType.SINE:
             output = np.sin(self.phase)
