@@ -2,12 +2,13 @@ import population as poplib
 import simulation as simlib
 import creature as crlib
 import genome as genlib
+import fitness as fitlib
 import numpy as np
 
 # genetic algorithm settings
 POPULATION = 20
 SIM_LENGTH = 1200
-GENERATIONS = 100
+GENERATIONS = 20
 
 # genome settings
 GENE_COUNT = 3                  # Number of genes/limbs in creature
@@ -21,16 +22,6 @@ logs = ["generation,stage,best_fitness,mean_fitness,max_links,mean_links\n"]
 
 
 
-def fatness_penalty(cr):
-
-    links = cr.get_expanded_links()
-    penalties = []
-    for link in links:
-        length = max(link.link_length, 0.001)
-        radius = link.link_radius
-        fatness = radius / length
-        penalties.append(fatness)
-    return np.mean(penalties)
 
 def run_ga():
     pop = poplib.Population(pop_size=POPULATION, gene_count=GENE_COUNT)
@@ -38,38 +29,20 @@ def run_ga():
     generations = GENERATIONS
 
     for generation in range(generations):
+        # run the simulation
         sim.eval_population(pop, SIM_LENGTH)
-        # iterate all creatures in population, get distance and save in array
-        if generation < generations / 2:
-            fits = [
-                cr.get_distance_travelled() / (
-                    1
-                    + 0.05 * len(cr.get_expanded_links())
-                    + 0.5 * fatness_penalty(cr)
-                )
-                for cr in pop.creatures
-            ]
-            links = [len(cr.get_expanded_links()) for cr in pop.creatures]
-            fitness_scores = fits
-            logs.append(
-                f"{generation},walking,"
-                f"{np.max(fitness_scores):.3f},"
-                f"{np.mean(fitness_scores):.3f},"
-                f"{np.max(links)},"
-                f"{np.mean(links):.3f}\n"
-            )
-        else:
-            fits = [cr.get_distance_to_peak() for cr in pop.creatures]
-            links = [len(cr.get_expanded_links()) for cr in pop.creatures]
-            fitness_scores = [1.0 / (1.0 + f) for f in fits]
-            logs.append(
-                f"{generation},climbing,"
-                f"{np.max(fitness_scores):.3f},"
-                f"{np.mean(fitness_scores):.3f},"
-                f"{np.max(links)},"
-                f"{np.mean(links):.3f}\n"
-            )
 
+        # calculate fitness scores
+        fitness_scores = fitlib.Fitness.get_scores(pop)
+        print(fitness_scores)
+        links = [len(cr.get_expanded_links()) for cr in pop.creatures]
+        logs.append(
+            f"{generation},"
+            f"{np.max(fitness_scores):.3f},"
+            f"{np.mean(fitness_scores):.3f},"
+            f"{np.max(links)},"
+            f"{np.mean(links):.3f}\n"
+        )
 
         fitmap = poplib.Population.get_fitness_map(fitness_scores)
 

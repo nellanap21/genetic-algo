@@ -40,7 +40,7 @@ while True:
         p.setJointMotorControl2(cid, jid, 
                                 controlMode=p.VELOCITY_CONTROL,
                                 targetVelocity=m.get_output(),
-                                force = 5)
+                                force = 50)
 
     pos, orn = p.getBasePositionAndOrientation(cid)
     c.update_position(pos)

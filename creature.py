@@ -138,6 +138,30 @@ class Creature:
 
         # this measures total movement even back and forth
         return self.dist
+    
+    def get_hdist_to_peak(self):
+        """
+        Inputs: none
+
+        """
+        if self.start_position == None or self.last_position == None:
+            return 0
+        p1 = np.array(self.last_position[:2]) # just x and y coords
+        p2 = np.array([0,0])
+
+        return np.linalg.norm(p1-p2)
+
+    def get_vdist_to_peak(self):
+        """
+        Inputs: none
+        Outputs: vertical distance to the peak
+        """
+        if self.start_position == None or self.last_position == None:
+            return 0
+        p1 = np.array(self.last_position[2]) # just z coord
+        p2 = np.array([4])
+
+        return abs(p2 - p1)
 
     def get_distance_travelled(self):
         # this measures the overall distance from origin

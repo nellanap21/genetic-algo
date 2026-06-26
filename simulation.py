@@ -31,7 +31,7 @@ class Simulation():
 
         # sets position to slightly above the ground to fix the flying problem
         # start at side to have consistent starting position
-        p.resetBasePositionAndOrientation(cid, [0,-8,1], [0,0,0,2], physicsClientId=pid)
+        p.resetBasePositionAndOrientation(cid, [0,-6,1], [0,0,0,2], physicsClientId=pid)
 
         for step in range(iterations):
             p.stepSimulation(physicsClientId=pid)
@@ -57,7 +57,7 @@ class Simulation():
             p.setJointMotorControl2(cid, jid,
                                     controlMode=p.VELOCITY_CONTROL,
                                     targetVelocity=m.get_output(),
-                                    force = 5,
+                                    force = 50,
                                     physicsClientId=self.physicsClientId)
 
 
@@ -76,8 +76,15 @@ class ThreadedSim():
 
     def eval_population(self, pop, iterations):
         """
-        pop is a Population object
-        iterations is frames in pybullet to run for at 240fps
+        Evaluates all creatures in a population
+
+        Inputs
+        - pop: population object with all creatures
+        - iterations: number of frames to run simulation (pybullet is 240fps)
+        
+        Outputs
+        - none: modifies the population in place
+
         """
         pool_args = []
 
@@ -91,15 +98,14 @@ class ThreadedSim():
                 iterations
             ])
 
+        # runs simulations in parallel
         with Pool(self.pool_size) as pool:
             new_creatures = pool.starmap(
                 ThreadedSim.static_run_creature,
                 pool_args
             )
 
-        # for cr in new_creatures:
-        #     print(cr.get_distance_to_peak())
-
+        # replace with creatures that contain fitness data
         pop.creatures = new_creatures
 
 

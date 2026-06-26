@@ -22,7 +22,7 @@ def main(csv_file):
     p.configureDebugVisualizer(p.COV_ENABLE_GUI, 0)
 
     p.resetDebugVisualizerCamera(
-        cameraDistance=15,
+        cameraDistance=10,
         cameraYaw=45,
         cameraPitch=-35,
         cameraTargetPosition=[0, 0, 2]
@@ -51,7 +51,7 @@ def main(csv_file):
     c.update_position([0,0,0])
 
     # sets position to slightly above the ground to fix the flying problem
-    p.resetBasePositionAndOrientation(cid, [0, -8, 1], [0,0,0,2])
+    p.resetBasePositionAndOrientation(cid, [0, -6, 1], [0,0,0,2])
 
     # needed for mac users to interact
     while True:
@@ -61,7 +61,7 @@ def main(csv_file):
             p.setJointMotorControl2(cid, jid, 
                                     controlMode=p.VELOCITY_CONTROL,
                                     targetVelocity=m.get_output(),
-                                    force = 5)
+                                    force = 50)
 
         pos, orn = p.getBasePositionAndOrientation(cid)
         c.update_position(pos)
