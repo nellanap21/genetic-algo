@@ -1,5 +1,4 @@
-# from terminal, type this command: ipython 
-# within ipython, type following command: run starter.py
+# use this to load any urdf file
 
 import pybullet as p
 import time

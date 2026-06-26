@@ -1,5 +1,5 @@
-# from terminal, type this command: ipython 
-# within ipython, type following command: run motor_test.py
+# use this to generate one create 
+# and test the motor control parameters
 
 import pybullet as p
 import pybullet_data as pd
@@ -40,8 +40,8 @@ while True:
         p.setJointMotorControl2(cid, jid,
                                 controlMode=p.POSITION_CONTROL,
                                 targetPosition=m.get_output(),
-                                force = 100,
-                                maxVelocity = 2)
+                                force = 5,
+                                maxVelocity = 5)
 
     pos, orn = p.getBasePositionAndOrientation(cid)
     c.update_position(pos)

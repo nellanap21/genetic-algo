@@ -1,3 +1,6 @@
+# use this to load creature from urdf
+# and test motor control parameters
+
 import pybullet as p
 import pybullet_data
 import time
@@ -47,13 +50,15 @@ while True:
     target_angle = math.sin(t) * 3  # radians
 
 
-    target_angle2 = np.sin(t) * 1
+    target_angle2 = np.sin(t) * 2
     print(target_angle, target_angle2)
     p.setJointMotorControl2(
         bodyUniqueId=robot_id,
         jointIndex=joint_id,
         controlMode=p.POSITION_CONTROL,
-        targetPosition=target_angle2)
+        targetPosition=target_angle2,
+        force = 5,
+        maxVelocity = 5)
 
     p.stepSimulation()
     time.sleep(1 / 240)

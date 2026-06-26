@@ -62,8 +62,8 @@ def main(csv_file):
             p.setJointMotorControl2(cid, jid,
                                     controlMode=p.POSITION_CONTROL,
                                     targetVelocity=m.get_output(),
-                                    force = 100,
-                                    maxVelocity = 2)
+                                    force = 5,
+                                    maxVelocity = 5)
 
         pos, orn = p.getBasePositionAndOrientation(cid)
         c.update_position(pos)
