@@ -62,12 +62,6 @@ class Simulation():
                                     maxVelocity = 2,
                                     physicsClientId=self.physicsClientId)
 
-            # set joint velocity to the output of motor - velocity
-            # p.setJointMotorControl2(cid, jid,
-            #                         controlMode=p.VELOCITY_CONTROL,
-            #                         targetVelocity=m.get_output(),
-            #                         force = 50,
-            #                         physicsClientId=self.physicsClientId)
 
 
 class ThreadedSim():

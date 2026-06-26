@@ -18,7 +18,7 @@ floor = p.createMultiBody(plane_shape, plane_shape)
 # set gravity
 p.setGravity(0, 0, -10)
 
-c = creature.Creature(gene_count = 5)
+c = creature.Creature(gene_count = 2)
 
 with open('temp/test.urdf', 'w') as f:
     c.get_expanded_links()
@@ -30,21 +30,22 @@ cid = p.loadURDF('temp/test.urdf')
 c.update_position([0,0,0])
 
 # sets position to slightly above the ground to fix the flying problem
-p.resetBasePositionAndOrientation(cid, [0,0,3], [0,0,0,1])
+p.resetBasePositionAndOrientation(cid, [0,0,1], [0,0,0,1])
 
 # needed for mac users to interact
 while True:
     for jid in range(p.getNumJoints(cid)):
         m = c.get_motors()[jid]
-
-        p.setJointMotorControl2(cid, jid, 
-                                controlMode=p.VELOCITY_CONTROL,
-                                targetVelocity=m.get_output(),
-                                force = 50)
+        print(cid, jid, m.get_output())
+        p.setJointMotorControl2(cid, jid,
+                                controlMode=p.POSITION_CONTROL,
+                                targetPosition=m.get_output(),
+                                force = 100,
+                                maxVelocity = 2)
 
     pos, orn = p.getBasePositionAndOrientation(cid)
     c.update_position(pos)
-    print(c.get_distance_to_peak())
+    # print(c.get_distance_travelled())
 
     p.stepSimulation()
     # time.sleep(0.1) # 10 times a second

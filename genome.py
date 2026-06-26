@@ -272,49 +272,51 @@ class URDFLink:
     def to_link_element(self, adom):
         link_tag = adom.createElement("link")
         link_tag.setAttribute("name", self.name)
+        
         vis_tag = adom.createElement("visual")
         geom_tag = adom.createElement("geometry")
         cyl_tag = adom.createElement("cylinder")
         cyl_tag.setAttribute("length", str(self.link_length))
         cyl_tag.setAttribute("radius", str(self.link_radius))
-        
-        geom_tag.appendChild(cyl_tag)
-        vis_tag.appendChild(geom_tag)
-        
-        
+        orig_tag = adom.createElement("origin")
+        orig_tag.setAttribute("xyz", f"0 0 {self.link_length / 2}") # set origin to one end of the link
+
         coll_tag = adom.createElement("collision")
         c_geom_tag = adom.createElement("geometry")
         c_cyl_tag = adom.createElement("cylinder")
+        c_orig_tag = adom.createElement("origin")
         c_cyl_tag.setAttribute("length", str(self.link_length))
         c_cyl_tag.setAttribute("radius", str(self.link_radius))
+        c_orig_tag.setAttribute("xyz", f"0 0 {self.link_length / 2}")
         
-        c_geom_tag.appendChild(c_cyl_tag)
-        coll_tag.appendChild(c_geom_tag)
-        
-        #     <inertial>
-        # 	    <mass value="0.25"/>
-        # 	    <inertia ixx="0.0003" iyy="0.0003" izz="0.0003" ixy="0" ixz="0" iyz="0"/>
-        #     </inertial>
         inertial_tag = adom.createElement("inertial")
         mass_tag = adom.createElement("mass")
+
         # pi r^2 * height
         mass = np.pi * (self.link_radius * self.link_radius) * self.link_length
         mass_tag.setAttribute("value", str(mass))
         inertia_tag = adom.createElement("inertia")
-        # <inertia ixx="0.0003" iyy="0.0003" izz="0.0003" ixy="0" ixz="0" iyz="0"/>
         inertia_tag.setAttribute("ixx", "0.03")
         inertia_tag.setAttribute("iyy", "0.03")
         inertia_tag.setAttribute("izz", "0.03")
         inertia_tag.setAttribute("ixy", "0")
         inertia_tag.setAttribute("ixz", "0")
         inertia_tag.setAttribute("iyz", "0")
+
+        # set hierarchy
+        link_tag.appendChild(vis_tag)
+        vis_tag.appendChild(geom_tag)
+        geom_tag.appendChild(cyl_tag)
+        vis_tag.appendChild(orig_tag)
+
+        link_tag.appendChild(coll_tag)
+        coll_tag.appendChild(c_geom_tag)
+        c_geom_tag.appendChild(c_cyl_tag)
+        coll_tag.appendChild(c_orig_tag)
+
+        link_tag.appendChild(inertial_tag)
         inertial_tag.appendChild(mass_tag)
         inertial_tag.appendChild(inertia_tag)
-        
-
-        link_tag.appendChild(vis_tag)
-        link_tag.appendChild(coll_tag)
-        link_tag.appendChild(inertial_tag)
         
         return link_tag
 
@@ -326,14 +328,10 @@ class URDFLink:
         parent_tag.setAttribute("link", self.parent_name)
         child_tag = adom.createElement("child")
         child_tag.setAttribute("link", self.name)
+
         # controls axis of rotation x, y, or z
         axis_tag = adom.createElement("axis")
-        if self.joint_axis_xyz <= 0.33:
-            axis_tag.setAttribute("xyz", "1 0 0")
-        if self.joint_axis_xyz > 0.33 and self.joint_axis_xyz <= 0.66:
-            axis_tag.setAttribute("xyz", "0 1 0")
-        if self.joint_axis_xyz > 0.66:
-            axis_tag.setAttribute("xyz", "0 0 1")
+        axis_tag.setAttribute("xyz", "0 1 0")
         
         # controls how much joint bends
         limit_tag = adom.createElement("limit")
@@ -350,11 +348,10 @@ class URDFLink:
         # joint is located at the origin of the child link
         orig_tag = adom.createElement("origin")
         
-        # rotation will increase based on number of siblings
-        rpy1 = self.joint_origin_rpy_1 * self.sibling_ind
-        rpy = str(rpy1) + " " + str(self.joint_origin_rpy_2) + " " + str(self.joint_origin_rpy_3)
-        orig_tag.setAttribute("rpy", rpy)
+        # do not change roll, pitch, yaw of joint
+        orig_tag.setAttribute("rpy", "0 0 0")
 
+        # NOTE: fix so joint is at the end of parent joint
         xyz = str(self.joint_origin_xyz_1) + " " + str(self.joint_origin_xyz_2) + " " + str(self.link_length) # extend link out from origin
         orig_tag.setAttribute("xyz", xyz)
 
