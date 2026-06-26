@@ -30,9 +30,9 @@ class Genome():
             "joint_origin_rpy_1": {"scale": np.pi}, 
             "joint_origin_rpy_2": {"scale": np.pi}, 
             "joint_origin_rpy_3":{"scale": np.pi}, 
-            "joint_origin_xyz_1": {"scale": 0.5},
-            "joint_origin_xyz_2": {"scale": 0.5},
-            "joint_origin_xyz_3":{"scale": 0.5},
+            "joint_origin_xyz_1": {"scale": 1},
+            "joint_origin_xyz_2": {"scale": 1},
+            "joint_origin_xyz_3":{"scale": 1},
             "control_waveform": {"scale": 1},
             "control_amp": {"scale": 2.0},
             "control_freq":{"scale": 0.4}
@@ -348,21 +348,17 @@ class URDFLink:
         limit_tag.setAttribute("upper", "3.1415")
         limit_tag.setAttribute("lower", "-3.1415")
 
-        # control max joint effort
-        limit_tag.setAttribute("effort", "100")
-
-        # control max joint velocity
-        limit_tag.setAttribute("velocity", "10")
-
         # transform from the parent link to the child link 
         # joint is located at the origin of the child link
         orig_tag = adom.createElement("origin")
-        
+
+        angle = self.sibling_ind * (2 * np.pi / 4)  # 4 directions   
+
         # do not change roll, pitch, yaw of joint
-        orig_tag.setAttribute("rpy", "0 0 0")
+        orig_tag.setAttribute("rpy", f"0 0 {angle}")
 
         # NOTE: fix so joint is at the end of parent joint
-        orig_tag.setAttribute("xyz", f"0 0 {self.parent_length}")
+        orig_tag.setAttribute("xyz", f"0 0 {self.parent_length * self.joint_origin_xyz_3}")
 
         joint_tag.appendChild(parent_tag)
         joint_tag.appendChild(child_tag)

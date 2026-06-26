@@ -8,14 +8,14 @@ import numpy as np
 # genetic algorithm settings
 POPULATION = 20
 SIM_LENGTH = 1200
-GENERATIONS = 10
+GENERATIONS = 50
 
 # genome settings
 GENE_COUNT = 3                  # Number of genes/limbs in creature
 POINT_MUTATION_RATE = 0.1       # Percent chance of mutating a gene
 POINT_MUTATION_AMOUNT = 0.01
-GROW_RATE = 0.01               # discourage evolving extra limbs
-SHRINK_RATE = 0.01              # removes accidental extra limbs
+GROW_RATE = 0.00               # discourage evolving extra limbs
+SHRINK_RATE = 0.00              # removes accidental extra limbs
 
 
 logs = ["generation,stage,best_fitness,mean_fitness,max_links,mean_links\n"]
@@ -75,10 +75,10 @@ def run_ga():
         
         # NOTE: replace the lowest with the elite
         new_gen[0] = elite # you are being replaced with elite
-        # if generation % (generations / 10) == 0:
+        if generation % (generations / 10) == 0:
             #print(generation)
-        csv_filename = f"elites/elite{generation}.csv"
-        genlib.Genome.to_csv(elite.dna, csv_filename)
+            csv_filename = f"elites/elite{generation}.csv"
+            genlib.Genome.to_csv(elite.dna, csv_filename)
         pop.creatures = new_gen
 
 

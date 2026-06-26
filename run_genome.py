@@ -64,8 +64,8 @@ def main(csv_file):
                                     jid,
                                     controlMode=p.POSITION_CONTROL,
                                     targetPosition=m.get_output(),
-                                    force = 5,
-                                    maxVelocity = 5)
+                                    force = 100,
+                                    maxVelocity = 10)
 
         pos, orn = p.getBasePositionAndOrientation(cid)
         c.update_position(pos)

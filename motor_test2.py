@@ -57,8 +57,8 @@ while True:
         jointIndex=joint_id,
         controlMode=p.POSITION_CONTROL,
         targetPosition=target_angle2,
-        force = 5,
-        maxVelocity = 5)
+        force = 100,
+        maxVelocity = 10)
 
     p.stepSimulation()
     time.sleep(1 / 240)
