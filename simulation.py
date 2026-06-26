@@ -55,9 +55,10 @@ class Simulation():
             m = cr.get_motors()[jid]
 
             # position control
-            p.setJointMotorControl2(cid, jid,
+            p.setJointMotorControl2(cid, 
+                                    jid,
                                     controlMode=p.POSITION_CONTROL,
-                                    targetVelocity=m.get_output(),
+                                    targetPosition=m.get_output(),
                                     force = 5,
                                     maxVelocity = 5,
                                     physicsClientId=self.physicsClientId)

@@ -35,7 +35,7 @@ def main(csv_file):
     # set gravity
     p.setGravity(0, 0, -10)
 
-    c = creature.Creature(gene_count = 5)
+    c = creature.Creature(gene_count = 2)
 
     dna = genlib.Genome.from_csv(csv_file)
     c.set_dna(dna)
@@ -59,9 +59,11 @@ def main(csv_file):
             m = c.get_motors()[jid]
 
             # position control
-            p.setJointMotorControl2(cid, jid,
+            print(m.get_output())
+            p.setJointMotorControl2(cid, 
+                                    jid,
                                     controlMode=p.POSITION_CONTROL,
-                                    targetVelocity=m.get_output(),
+                                    targetPosition=m.get_output(),
                                     force = 5,
                                     maxVelocity = 5)
 
