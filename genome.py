@@ -97,20 +97,26 @@ class Genome():
         links = []        
         link_ind = 0
         parent_names = [str(link_ind)] # start with just number 0
+        links_by_name = {}
         for gdict in gdicts:
             link_name = str(link_ind)
 
             # links can connect any previous link
-            parent_ind = gdict["joint_parent"] * len(parent_names)
-            parent_ind = min(parent_ind, len(parent_names) - 1) # to ensure parent_ind is not out or ange
-            parent_name = parent_names[int(parent_ind)]
-            
+            # parent_ind = gdict["joint_parent"] * len(parent_names)
+            # parent_ind = min(parent_ind, len(parent_names) - 1) # to ensure parent_ind is not out or ange
+            # parent_name = parent_names[int(parent_ind)]
+
             # links can only connect to first link
-            # if link_ind == 0:
-            #     parent_name = "None"
-            # else:
-            #     parent_name = "0"
-            # print("available parents: ", parent_names, "chose", parent_name)
+            if link_ind == 0:
+                parent_name = "None"
+            else:
+                parent_name = "0"
+
+            if not links_by_name:
+                parent_length = 0.0
+            else:
+                parent_length = links_by_name[parent_name].link_length
+
             recur = gdict["link_recurrence"]
             link = URDFLink(name=link_name, 
                             parent_name=parent_name, 
@@ -118,6 +124,7 @@ class Genome():
                             link_length=0.5 + gdict["link_length"],
                             link_radius=0.03 + gdict["link_radius"],
                             link_mass=gdict["link_mass"],
+                            parent_length=parent_length,
                             joint_type=gdict["joint_type"],
                             joint_parent=gdict["joint_parent"],
                             joint_axis_xyz=gdict["joint_axis_xyz"],
@@ -131,9 +138,10 @@ class Genome():
                             control_amp=0.5 + gdict["control_amp"],
                             control_freq=0.05 + gdict["control_freq"])
             links.append(link)
+            links_by_name[link_name] = link
             if link_ind != 0: # don't re-add the first link
                 parent_names.append(link_name)
-            link_ind = link_ind + 1
+            link_ind = int(link_ind) + 1
 
         # now fix the first link so it links to nothing
         links[0].parent_name = "None"
@@ -236,6 +244,7 @@ class URDFLink:
                  link_length=0.1,
                  link_radius=0.1,
                  link_mass=0.1,
+                 parent_length=0.5,
                  joint_type=0.1,
                  joint_parent=0.1,
                  joint_axis_xyz=0.1,
@@ -254,6 +263,7 @@ class URDFLink:
         self.link_length = link_length
         self.link_radius = link_radius
         self.link_mass = link_mass
+        self.parent_length = parent_length
         self.joint_type = joint_type
         self.joint_parent = joint_parent
         self.joint_axis_xyz = joint_axis_xyz
@@ -352,8 +362,7 @@ class URDFLink:
         orig_tag.setAttribute("rpy", "0 0 0")
 
         # NOTE: fix so joint is at the end of parent joint
-        xyz = str(self.joint_origin_xyz_1) + " " + str(self.joint_origin_xyz_2) + " " + str(self.link_length) # extend link out from origin
-        orig_tag.setAttribute("xyz", xyz)
+        orig_tag.setAttribute("xyz", f"0 0 {self.parent_length}")
 
         joint_tag.appendChild(parent_tag)
         joint_tag.appendChild(child_tag)

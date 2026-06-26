@@ -11,7 +11,7 @@ SIM_LENGTH = 1200
 GENERATIONS = 10
 
 # genome settings
-GENE_COUNT = 2                  # Number of genes/limbs in creature
+GENE_COUNT = 3                  # Number of genes/limbs in creature
 POINT_MUTATION_RATE = 0.1       # Percent chance of mutating a gene
 POINT_MUTATION_AMOUNT = 0.01
 GROW_RATE = 0.01               # discourage evolving extra limbs
