@@ -27,3 +27,13 @@ def make_arena(arena_size=10, wall_height=1):
     mountain_orientation = p.getQuaternionFromEuler((0, 0, 0))
     p.setAdditionalSearchPath('shapes/')
     mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)
+
+    # Increase mountain friction
+
+    p.changeDynamics(
+        mountain,
+        -1,                    # base link of the mountain
+        lateralFriction=4.0,
+        spinningFriction=0.2,
+        rollingFriction=0.0
+    )

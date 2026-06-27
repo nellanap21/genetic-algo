@@ -29,6 +29,10 @@ class Simulation():
         # call loadURDF to load the file into simulation
         cid = p.loadURDF(xml_file, physicsClientId=pid)
 
+        # friction for legs
+        for jid in range(p.getNumJoints(cid)):
+            p.changeDynamics(cid, jid, lateralFriction=4.0)
+
         # sets position to slightly above the ground to fix the flying problem
         # start at side to have consistent starting position
         p.resetBasePositionAndOrientation(cid, [0,-7,1], [0,0,0,2], physicsClientId=pid)

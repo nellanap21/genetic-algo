@@ -384,15 +384,17 @@ class URDFLink:
         pitch = 1.5 if self.sibling_ind % 2 == 0 else -1.5
         j_origin_x = BODY_RADIUS if self.sibling_ind % 2 == 0 else -BODY_RADIUS
 
+        yaw = 3.14 if self.sibling_ind % 2 == 0 else -3.14
         # roll, pitch, yaw of joint
         #if z_pos < body_quarter or z_pos > body_quarter * 3:
-        if z_pos < body_quarter * 2:
-            orig_tag.setAttribute("rpy", f"{abs(pitch)} 0 0")
+        # try to make the last quarter act like a tail
+        if z_pos < body_quarter:
+            orig_tag.setAttribute("rpy", f"0 0 {yaw}")
         else:
             orig_tag.setAttribute("rpy", f"0 {pitch} 0")
 
         # NOTE: fix so joint is at the end of parent joint
-        orig_tag.setAttribute("xyz", f"{j_origin_x} 0 {self.parent_length * self.joint_origin_xyz_3}")
+        orig_tag.setAttribute("xyz", f"{j_origin_x} 0 {self.parent_length * self.joint_origin_xyz_3 * .75}")
 
         joint_tag.appendChild(parent_tag)
         joint_tag.appendChild(child_tag)

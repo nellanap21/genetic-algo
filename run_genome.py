@@ -48,6 +48,10 @@ def main(csv_file):
     # load it into the sim
     cid = p.loadURDF('temp/test.urdf')
 
+    # friction for legs
+    for jid in range(p.getNumJoints(cid)):
+        p.changeDynamics(cid, jid, lateralFriction=4.0)
+
     # assume creature sitting at origin
     c.update_position([0,0,0])
     orientation = p.getQuaternionFromEuler([0, math.pi / 2, math.pi / 2])

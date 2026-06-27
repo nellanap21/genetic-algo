@@ -44,7 +44,7 @@ for j in range(num_joints):
 # Main simulation loop
 t = 0
 
-num_legs = 20
+num_legs = 8
 num_pairs = num_legs // 2
 phases = []
 
