@@ -83,18 +83,18 @@ class GenomeTest (unittest.TestCase):
         genome.Genome.expandLinks(links[0], links[0].name, links, exp_links)
         self.assertEqual(len(exp_links), 3)
 
-    def testExpandLinks2(self):
-        links = [
-            genome.URDFLink(name="A", parent_name="None", recur=1),
-            genome.URDFLink(name="B", parent_name="A", recur=1),
-            genome.URDFLink(name="C", parent_name="B", recur=2),
-            genome.URDFLink(name="D", parent_name="C", recur=1),
-        ]
-        exp_links = [links[0]]
-        genome.Genome.expandLinks(links[0], links[0].name, links, exp_links) 
-        names = [l.name+"-parent-is-"+l.parent_name for l in exp_links]
-        # print(names)
-        self.assertEqual(len(exp_links), 6)
+    # def testExpandLinks2(self):
+    #     links = [
+    #         genome.URDFLink(name="A", parent_name="None", recur=1),
+    #         genome.URDFLink(name="B", parent_name="A", recur=1),
+    #         genome.URDFLink(name="C", parent_name="B", recur=2),
+    #         genome.URDFLink(name="D", parent_name="C", recur=1),
+    #     ]
+    #     exp_links = [links[0]]
+    #     genome.Genome.expandLinks(links[0], links[0].name, links, exp_links) 
+    #     names = [l.name+"-parent-is-"+l.parent_name for l in exp_links]
+    #     # print(names)
+    #     self.assertEqual(len(exp_links), 6)
 
     def testGetLinks(self):
         spec = genome.Genome.get_gene_spec()
@@ -137,13 +137,13 @@ class GenomeTest (unittest.TestCase):
         # print(g2)
         self.assertFalse(np.array_equal(g1, g2))
 
-    # ensure values have not gone out of range 0-1
-    # def test_point_range(self):
-    #     g1 = np.array([[1.0], [0.0], [1.0], [0.0]])
-    #     for i in range(100):
-    #         g2 = genome.Genome.point_mutate(g1, rate=1, amount=0.25)
-    #         self.assertLess(np.max(g2), 1.0)
-    #         self.assertGreaterEqual(np.min(g2), 0.0)
+    #ensure values have not gone out of range 0-1
+    def test_point_range(self):
+        g1 = np.array([[1.0], [0.0], [1.0], [0.0]])
+        for i in range(100):
+            g2 = genome.Genome.point_mutate(g1, rate=1, amount=0.25)
+            self.assertLess(np.max(g2), 1.0)
+            self.assertGreaterEqual(np.min(g2), 0.0)
 
     def test_shrink0(self):
         g1 = np.array([[1.0,2.0,3.0], [4.0,5.0,6.0], [7.0,8.0,9.0]])

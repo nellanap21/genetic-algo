@@ -182,14 +182,13 @@ class Genome():
     @staticmethod
     def point_mutate(genes, rate, amount):
         """
-        Randomly mutates values within genome
-        Inputs
-        genes:  the genome to mutate
-        rate:   probability 0-1 each gene will be mutated
-        amount: max magnitude of the mutation. value is adjusted to be 
-                random amount between -amount/2 and +amount/2
-        Outputs
-        copy of genome with random point mutations
+        Input
+            genes:  the genome to mutate
+            rate:   probability 0-1 each gene will be mutated
+            amount: max magnitude of the mutation. value is adjusted to be 
+                    random amount between -amount/2 and +amount/2
+        Output
+            copy of genome with random point mutations
         """
         new_genes = copy.copy(genes)
         for gene in new_genes:
@@ -197,26 +196,34 @@ class Genome():
             if np.random.rand() < rate:
                 ind = np.random.randint(len(gene)) # choose one gene
 
-                # these next two lines are from videos
+                # randomize the amount value is changed
                 r = (np.random.rand() - 0.5) * amount
                 gene[ind] = gene[ind] + r
-                gene[ind] = np.clip(gene[ind], 0, 1)
-                # take the current value, multiply by random 0-1, multiply by amount
-                # gene[ind] = gene[ind] * np.random.rand() * amount
+                mutated = gene[ind] + r
+
+                # keep the mutated value between (0,1)
+                if mutated >= 1:
+                    gene[ind] = 0.99
+                elif mutated <= 0:
+                    gene[ind] = 0.01
+                else:
+                    gene[ind] = mutated
         return new_genes
 
     @staticmethod
     def shrink_mutate(genes, rate):
         if len(genes) == 1:
             return genes
+        # if rate is high, more likely to shrink
         if np.random.rand() < rate:
-            # NOTE: adjust so that it cna remove first gene?
-            ind = np.random.randint(len(genes))
+            # cannot remove the first gene (the body)
+            ind = np.random.randint(1, len(genes))
             genes = np.delete(genes, ind, 0)
         return genes
 
     @staticmethod
     def grow_mutate(genes, rate):
+        # if rate is high, more likely to grow
         if np.random.rand() < rate:
             gene = Genome.get_random_gene(len(genes[0]))
             genes = np.append(genes, [gene], axis=0)
