@@ -56,7 +56,7 @@ def main(csv_file):
     c.update_position([0,0,0])
     orientation = p.getQuaternionFromEuler([0, math.pi / 2, math.pi / 2])
     # sets position to slightly above the ground to fix the flying problem
-    p.resetBasePositionAndOrientation(cid, [0, -7, 1], orientation)
+    p.resetBasePositionAndOrientation(cid, [0, -6, 1], orientation)
 
     # Print joint information
     num_joints = p.getNumJoints(cid)

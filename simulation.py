@@ -35,7 +35,7 @@ class Simulation():
 
         # sets position to slightly above the ground to fix the flying problem
         # start at side to have consistent starting position
-        p.resetBasePositionAndOrientation(cid, [0,-7,1], [0,0,0,2], physicsClientId=pid)
+        p.resetBasePositionAndOrientation(cid, [0,-6,1], [0,0,0,2], physicsClientId=pid)
 
         for step in range(iterations):
             p.stepSimulation(physicsClientId=pid)
