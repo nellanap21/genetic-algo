@@ -169,14 +169,14 @@ class Genome():
         """
         g1 and g2 are raw dna data - list of lists of floats
         """
-        xo = np.random.randint(len(g1))
-        if xo == 0:
-            return g2
-        if xo == len(g1) - 1:
-            return g1
-        if xo > len(g2):
-            xo = len(g2) - 1
+        min_length = min(len(g1), len(g2))
+        # check if one genome has 0 or 1 genes
+        if min_length < 2:
+            return np.concatenate(g1, g2)
+        # select random gene and concatenate at that gene
+        xo = np.random.randint(1, min_length)
         g3 = np.concatenate((g1[0:xo], g2[xo:]))
+
         return g3
 
     @staticmethod
