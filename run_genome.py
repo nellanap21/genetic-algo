@@ -14,6 +14,7 @@ import os
 import environment as envt
 import math
 
+SIM_LENGTH = 1200
 
 def main(csv_file):
     assert os.path.exists(csv_file), "Tried to load " + csv_file + "but it does not exist"
@@ -67,7 +68,7 @@ def main(csv_file):
         print("Joint", j, info[1].decode("utf-8"), "type:", info[2])
 
     # needed for mac users to interact
-    while True:
+    for frame in range(SIM_LENGTH):
         for jid in range(p.getNumJoints(cid)):
             m = c.get_motors()[jid]
 
@@ -88,8 +89,16 @@ def main(csv_file):
 
         p.stepSimulation()
         # time.sleep(0.1) # 10 times a second
-        time.sleep(1.0/240) # pybullet is 240 frames per second
+        time.sleep(1.0/240) # pybullet is 240 frames per second, so runs in real time
     
+    # this allows me to analyze the final pos for calculation of fitnesss function
+    print("Simulation finished. Freezing final frame.")
+    while True:
+        time.sleep(1.0 / 240)
+    
+
+
+
 
 if __name__ == "__main__":
     assert len(sys.argv) == 2, "Usage: python run_genome.py csv_filename"
