@@ -31,7 +31,7 @@ class Simulation():
 
         # sets position to slightly above the ground to fix the flying problem
         # start at side to have consistent starting position
-        p.resetBasePositionAndOrientation(cid, [0,-6,1], [0,0,0,2], physicsClientId=pid)
+        p.resetBasePositionAndOrientation(cid, [0,-7,1], [0,0,0,2], physicsClientId=pid)
 
         for step in range(iterations):
             p.stepSimulation(physicsClientId=pid)
@@ -59,8 +59,8 @@ class Simulation():
                                     jid,
                                     controlMode=p.POSITION_CONTROL,
                                     targetPosition=m.get_output(),
-                                    force = 100,
-                                    maxVelocity = 10,
+                                    force = 40,
+                                    maxVelocity = 3,
                                     physicsClientId=self.physicsClientId)
 
 

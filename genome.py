@@ -1,6 +1,11 @@
 import numpy as np
 import copy
 
+BODY_LENGTH = 3
+BODY_RADIUS = 0.2
+LEG_LENGTH = BODY_LENGTH / 4
+LEG_RADIUS = BODY_RADIUS / 4
+
 class Genome():
     def __init__(self):
         pass
@@ -70,15 +75,17 @@ class Genome():
         # flat links contains all link types (ABCD)
         # find every link whose parent is the current link
         children = [l for l in flat_links if l.parent_name == parent_link.name]
-        # tracks which child number we're creating to rotate siblings
+
+        # tracks sibling index for naming sibling links
         sibling_ind = 1 
+
         for c in children:
-            for r in range(int(c.recur)):
+            for r in range(2):
                 sibling_ind = sibling_ind + 1
                 # create shallow copy of the child
                 c_copy = copy.copy(c)  
                 # attach to unique parent
-                c_copy.parent_name = uniq_parent_name
+                c_copy.parent_name = uniq_parent_name # should always be 0
                 # give child unique name
                 uniq_name = c_copy.name + str(len(exp_links))
                 # print("exp: ", c.name, " -> " , uniq_name)
@@ -95,7 +102,7 @@ class Genome():
         # turns genome (array of dicts) int
         # array of links
         links = []        
-        link_ind = 0
+        link_ind = int(0)
         parent_names = [str(link_ind)] # start with just number 0
         links_by_name = {}
         for gdict in gdicts:
@@ -112,17 +119,26 @@ class Genome():
             else:
                 parent_name = "0"
 
+            # set the parent link length
             if not links_by_name:
                 parent_length = 0.0
             else:
                 parent_length = links_by_name[parent_name].link_length
 
+            # first link (the body) has set dimensions
+            if link_ind == 0:
+                link_length = BODY_LENGTH
+                link_radius = BODY_RADIUS
+            else:   # Fixed leg length
+                link_length = LEG_LENGTH #gdict["link_length"]
+                link_radius = LEG_RADIUS #gdict["link_radius"]
+
             recur = gdict["link_recurrence"]
             link = URDFLink(name=link_name, 
                             parent_name=parent_name, 
                             recur=recur+1,
-                            link_length=0.5 + gdict["link_length"],
-                            link_radius=0.03 + gdict["link_radius"],
+                            link_length=link_length,
+                            link_radius=link_radius,
                             link_mass=gdict["link_mass"],
                             parent_length=parent_length,
                             joint_type=gdict["joint_type"],
@@ -135,8 +151,8 @@ class Genome():
                             joint_origin_xyz_2=gdict["joint_origin_xyz_2"],
                             joint_origin_xyz_3=gdict["joint_origin_xyz_3"],
                             control_waveform=gdict["control_waveform"],
-                            control_amp=0.5 + gdict["control_amp"],
-                            control_freq=0.05 + gdict["control_freq"])
+                            control_amp=gdict["control_amp"],
+                            control_freq=gdict["control_freq"])
             links.append(link)
             links_by_name[link_name] = link
             if link_ind != 0: # don't re-add the first link
@@ -304,14 +320,19 @@ class URDFLink:
 
         # pi r^2 * height
         mass = np.pi * (self.link_radius * self.link_radius) * self.link_length
+        r = self.link_radius
+        h = self.link_length
         mass_tag.setAttribute("value", str(mass))
         inertia_tag = adom.createElement("inertia")
-        inertia_tag.setAttribute("ixx", "0.03")
-        inertia_tag.setAttribute("iyy", "0.03")
-        inertia_tag.setAttribute("izz", "0.03")
+        inertia_tag.setAttribute("ixx", f"{(1/12) * mass * (3*r*r + h*h)}")
+        inertia_tag.setAttribute("iyy", f"{(1/12) * mass * (3*r*r + h*h)}")
+        inertia_tag.setAttribute("izz", f"{0.5 * mass * r * r}")
         inertia_tag.setAttribute("ixy", "0")
         inertia_tag.setAttribute("ixz", "0")
         inertia_tag.setAttribute("iyz", "0")
+        inertia_orig_tag = adom.createElement("origin")
+        inertia_orig_tag.setAttribute("xyz", f"0 0 {self.link_length / 2}")
+        inertia_orig_tag.setAttribute("rpy", "0 0 0")
 
         # set hierarchy
         link_tag.appendChild(vis_tag)
@@ -327,6 +348,7 @@ class URDFLink:
         link_tag.appendChild(inertial_tag)
         inertial_tag.appendChild(mass_tag)
         inertial_tag.appendChild(inertia_tag)
+        inertial_tag.appendChild(inertia_orig_tag)
         
         return link_tag
 
@@ -341,24 +363,36 @@ class URDFLink:
 
         # controls axis of rotation x, y, or z
         axis_tag = adom.createElement("axis")
-        axis_tag.setAttribute("xyz", "0 1 0")
+        axis_tag.setAttribute("xyz", "1 0 0")
         
         # controls how much joint bends
         limit_tag = adom.createElement("limit")
-        limit_tag.setAttribute("upper", "3.1415")
-        limit_tag.setAttribute("lower", "-3.1415")
+        limit_tag.setAttribute("upper", "1.2")
+        limit_tag.setAttribute("lower", "-1.2")
 
         # transform from the parent link to the child link 
         # joint is located at the origin of the child link
         orig_tag = adom.createElement("origin")
 
-        angle = self.sibling_ind * (2 * np.pi / 4)  # 4 directions   
+        # Position of the leg along the body
+        z_pos = self.parent_length * self.joint_origin_xyz_3
+        body_quarter = self.parent_length / 4
 
-        # do not change roll, pitch, yaw of joint
-        orig_tag.setAttribute("rpy", f"0 0 {angle}")
+        # Left/right side of body
+        #side = 1 if self.sibling_ind % 2 == 0 else -1
+
+        pitch = 1.5 if self.sibling_ind % 2 == 0 else -1.5
+        j_origin_x = BODY_RADIUS if self.sibling_ind % 2 == 0 else -BODY_RADIUS
+
+        # roll, pitch, yaw of joint
+        #if z_pos < body_quarter or z_pos > body_quarter * 3:
+        if z_pos < body_quarter * 2:
+            orig_tag.setAttribute("rpy", f"{abs(pitch)} 0 0")
+        else:
+            orig_tag.setAttribute("rpy", f"0 {pitch} 0")
 
         # NOTE: fix so joint is at the end of parent joint
-        orig_tag.setAttribute("xyz", f"0 0 {self.parent_length * self.joint_origin_xyz_3}")
+        orig_tag.setAttribute("xyz", f"{j_origin_x} 0 {self.parent_length * self.joint_origin_xyz_3}")
 
         joint_tag.appendChild(parent_tag)
         joint_tag.appendChild(child_tag)

@@ -9,18 +9,19 @@ class MotorType(Enum):
 
 class Motor():
     # self gives access to its own state
-    def __init__(self, control_waveform, control_amp, control_freq):
+    def __init__(self, control_waveform, control_amp, control_freq, phase_offset=0):
 
         self.motor_type = MotorType.SINE
-        self.amp = min(control_amp, 1.2)
-        self.freq = max(control_freq, 0.03)
+        self.amp = control_amp
+        self.freq = control_freq
         self.phase = 0
+        self.phase_offset = phase_offset
 
     def get_output(self):
         # every time get_output is called, the phase of waveform changes
         self.phase = self.phase + .03
 
-        output = np.sin(self.phase) * 2
+        output = np.sin(self.phase + self.phase_offset)
         return output
 
 class Creature:
@@ -51,7 +52,9 @@ class Creature:
     def get_flat_links(self):
         if self.flat_links == None:
             gdicts = genome.Genome.get_genome_dicts(self.dna, self.spec)
+
             self.flat_links = genome.Genome.genome_to_links(gdicts)
+            
         return self.flat_links
     
     def get_expanded_links(self):
@@ -92,13 +95,16 @@ class Creature:
 
     def get_motors(self):
         assert(self.exp_links != None), "creature: call get_exp_links before get_motors"
-        if self.motors == None:
+        if self.motors == None: # if no motors, make them
             motors = []
             for i in range(1, len(self.exp_links)):
                 l = self.exp_links[i]
                 # assume the URDFLink has control_waveform
                 # control_amp, and control_freq properties, read from genome
-                m = Motor(l.control_waveform, l.control_amp, l.control_freq)
+                # print("LINK INFO:", l.parent_length, l.joint_origin_xyz_3)
+                # map phase offset the location of link on the body
+                phase_offset = l.joint_origin_xyz_3 * 2 * np.pi
+                m = Motor(l.control_waveform, l.control_amp, l.control_freq, phase_offset)
                 motors.append(m)
             self.motors = motors
         return self.motors

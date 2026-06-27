@@ -12,6 +12,7 @@ import genome as genlib
 import sys
 import os
 import environment as envt
+import math
 
 
 def main(csv_file):
@@ -49,9 +50,17 @@ def main(csv_file):
 
     # assume creature sitting at origin
     c.update_position([0,0,0])
-
+    orientation = p.getQuaternionFromEuler([0, math.pi / 2, math.pi / 2])
     # sets position to slightly above the ground to fix the flying problem
-    p.resetBasePositionAndOrientation(cid, [0, -6, 1], [0,0,0,2])
+    p.resetBasePositionAndOrientation(cid, [0, -7, 1], orientation)
+
+    # Print joint information
+    num_joints = p.getNumJoints(cid)
+    print("Number of joints:", num_joints)
+
+    for j in range(num_joints):
+        info = p.getJointInfo(cid, j)
+        print("Joint", j, info[1].decode("utf-8"), "type:", info[2])
 
     # needed for mac users to interact
     while True:
@@ -59,13 +68,13 @@ def main(csv_file):
             m = c.get_motors()[jid]
 
             # position control
-            print(m.get_output())
+            #print(m.get_output())
             p.setJointMotorControl2(cid, 
                                     jid,
                                     controlMode=p.POSITION_CONTROL,
                                     targetPosition=m.get_output(),
-                                    force = 100,
-                                    maxVelocity = 10)
+                                    force = 200,
+                                    maxVelocity = 100)
 
         pos, orn = p.getBasePositionAndOrientation(cid)
         c.update_position(pos)
