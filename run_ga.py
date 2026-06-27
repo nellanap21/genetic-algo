@@ -8,7 +8,7 @@ import numpy as np
 # genetic algorithm settings
 POPULATION = 20
 SIM_LENGTH = 1200
-GENERATIONS = 10
+GENERATIONS = 50
 
 # genome settings
 GENE_COUNT = 20                  # Number of genes/limbs in creature
@@ -61,8 +61,8 @@ def run_ga():
             # p2_ind = poplib.Population.select_parent(fitmap)
 
             # tournament style selection
-            p1_ind = poplib.Population.select_parent_tournament(fitness_scores, tournament_size=3)
-            p2_ind = poplib.Population.select_parent_tournament(fitness_scores, tournament_size=3)
+            p1_ind = poplib.Population.select_parent_tournament(fitness_scores, tournament_size=POPULATION/5)
+            p2_ind = poplib.Population.select_parent_tournament(fitness_scores, tournament_size=POPULATION/5)
 
             dna = genlib.Genome.crossover(pop.creatures[p1_ind].dna,
                                         pop.creatures[p2_ind].dna)
