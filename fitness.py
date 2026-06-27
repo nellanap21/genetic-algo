@@ -10,9 +10,9 @@ class Fitness():
         scores = []
 
         for cr in pop.creatures:
-            hdist = cr.get_hdist_to_peak()
-            height = cr.last_position[2]
-            score = 5.0 * height + 2.0 * (6 - hdist)
+            horizontal_dist = cr.get_hdist_to_peak()
+            final_height = cr.last_position[2]
+            score = 5.0 * final_height - 2.0 * horizontal_dist
 
             scores.append(score)
 

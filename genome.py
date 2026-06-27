@@ -1,8 +1,8 @@
 import numpy as np
 import copy
 
-BODY_LENGTH = 3
-BODY_RADIUS = 0.2
+BODY_LENGTH = 1.5
+BODY_RADIUS = 0.1
 LEG_LENGTH = BODY_LENGTH / 4
 LEG_RADIUS = BODY_RADIUS / 4
 
