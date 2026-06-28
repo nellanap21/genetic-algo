@@ -3,6 +3,12 @@ import numpy as np
 
 class Population():
     def __init__(self, pop_size, gene_count):
+        """
+        Purpose: create a population of creatures 
+        Input: 
+            pop_size: the total size of the population
+            gene_count: the number genes each creature will have
+        """
         self.creatures = [creature.Creature(gene_count=gene_count) for i in range(pop_size)]
 
 

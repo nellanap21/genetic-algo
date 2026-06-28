@@ -1,5 +1,7 @@
-# use this to generate one create 
-# and test the motor control parameters
+"""
+Pupose: this script is used to help test the motor skills
+of a creature. This creature is randomly generated.
+"""
 
 import pybullet as p
 import pybullet_data as pd
