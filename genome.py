@@ -377,30 +377,24 @@ class URDFLink:
         limit_tag.setAttribute("upper", "1.2")
         limit_tag.setAttribute("lower", "-1.2")
 
-        # transform from the parent link to the child link 
-        # joint is located at the origin of the child link
+        # set location of joint origin
         orig_tag = adom.createElement("origin")
 
-        # Position of the leg along the body
+        # calculations needed to configure joint origin
         z_pos = self.parent_length * self.joint_origin_xyz_3
         body_quarter = self.parent_length / 4
-
-        # Left/right side of body
-        #side = 1 if self.sibling_ind % 2 == 0 else -1
-
         pitch = 1.5 if self.sibling_ind % 2 == 0 else -1.5
         j_origin_x = BODY_RADIUS if self.sibling_ind % 2 == 0 else -BODY_RADIUS
-
         yaw = 3.14 if self.sibling_ind % 2 == 0 else -3.14
+
         # roll, pitch, yaw of joint
-        #if z_pos < body_quarter or z_pos > body_quarter * 3:
-        # try to make the last quarter act like a tail
+        # if position is in the first quarter, move in yaw direction
         if z_pos < body_quarter:
             orig_tag.setAttribute("rpy", f"0 0 {yaw}")
+        # otherwise, joint moves in pitch direction
         else:
             orig_tag.setAttribute("rpy", f"0 {pitch} 0")
 
-        # NOTE: fix so joint is at the end of parent joint
         orig_tag.setAttribute("xyz", f"{j_origin_x} 0 {self.parent_length * self.joint_origin_xyz_3 * .75}")
 
         joint_tag.appendChild(parent_tag)
