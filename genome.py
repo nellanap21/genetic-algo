@@ -12,17 +12,32 @@ class Genome():
 
     @staticmethod
     def get_random_gene(length):
+        """
+        Purpose: create a random gene of floating point values between 0 and 1
+        Input: number of floats in the gene
+        Output: array of floats representing gene
+        """
         gene = np.array([np.random.random() for i in range(length)])
         return gene
 
     @staticmethod
     def get_random_genome(gene_length, gene_count):
+        """
+        Purpose: create a genome made of multiple genes
+        Input: 
+            gene_length: number of values in a gene
+            gene_count: number of genes in the genome
+        Output: array of array of floats representing genome
+        """
         genome = np.array([Genome.get_random_gene(gene_length) for i in range(gene_count)])
         return genome # returns an array of genes
     
     @staticmethod
     def get_gene_spec():
-        # allows you to pull value out of a gene by name
+        """
+        Purpose: allows you to get index and scale of each 
+        floating point value in the gene. 
+        """
         gene_spec = {
             "link_shape": {"scale":1},
             "link_length": {"scale":0.75},
@@ -52,6 +67,11 @@ class Genome():
     
     @staticmethod
     def get_gene_dict(gene, spec):
+        """
+        Purpose: convert a gene into a dictionary of scaled values
+        Input: one gene and the spec
+        Output: dictionary of the scaled value for the gene
+        """
         gene_dict = {}
         for key in spec.keys():
             ind = spec[key]["ind"]
@@ -62,16 +82,30 @@ class Genome():
     
     @staticmethod
     def get_genome_dicts(genome, spec):
+        """
+        Purpose: convert genome into a list of gene dicts
+        Input: one genome and the spec
+        Output: a list of dicts representing the genome
+        """
         genome_dicts = []
         for gene in genome:
             genome_dicts.append(Genome.get_gene_dict(gene, spec))
-        return genome_dicts # returns array of dicts
+        return genome_dicts 
     
-
-
-
     @staticmethod
     def expandLinks(parent_link, uniq_parent_name, flat_links, exp_links):
+        """
+        Purpose: expand creature's flat link using recursion
+
+        Input:
+            parent_link: the link 
+            uniq_parent_name: name of the link 
+            flat_links: the list flat links
+            exp_links: the list of expanded links
+
+        Output: 
+            none: creature's exp_links updated directly
+        """
         # flat links contains all link types (ABCD)
         # find every link whose parent is the current link
         children = [l for l in flat_links if l.parent_name == parent_link.name]
@@ -88,7 +122,6 @@ class Genome():
                 c_copy.parent_name = uniq_parent_name # should always be 0
                 # give child unique name
                 uniq_name = c_copy.name + str(len(exp_links))
-                # print("exp: ", c.name, " -> " , uniq_name)
                 c_copy.name = uniq_name
                 # store sibling index
                 c_copy.sibling_ind = sibling_ind
@@ -99,19 +132,17 @@ class Genome():
     
     @staticmethod
     def genome_to_links(gdicts):
-        # turns genome (array of dicts) int
-        # array of links
+        """
+        Purpose: convert gene dicts into URDFLinks objects
+        Input: list of dicts representing genome
+        Output: list of URDFLink objects
+        """
         links = []        
         link_ind = int(0)
         parent_names = [str(link_ind)] # start with just number 0
         links_by_name = {}
         for gdict in gdicts:
             link_name = str(link_ind)
-
-            # links can connect any previous link
-            # parent_ind = gdict["joint_parent"] * len(parent_names)
-            # parent_ind = min(parent_ind, len(parent_names) - 1) # to ensure parent_ind is not out or ange
-            # parent_name = parent_names[int(parent_ind)]
 
             # links can only connect to first link
             if link_ind == 0:
@@ -159,7 +190,7 @@ class Genome():
                 parent_names.append(link_name)
             link_ind = int(link_ind) + 1
 
-        # now fix the first link so it links to nothing
+        # fix the first link so it links to nothing
         links[0].parent_name = "None"
 
         return links
@@ -167,7 +198,9 @@ class Genome():
     @staticmethod
     def crossover(g1, g2):
         """
-        g1 and g2 are raw dna data - list of lists of floats
+        Purpose: create a new genome by combining parts of each parent
+        Input: g1 is first parent and g2 is second parent
+        Output: new child genome 
         """
         min_length = min(len(g1), len(g2))
         # check if one genome has 0 or 1 genes
@@ -182,13 +215,13 @@ class Genome():
     @staticmethod
     def point_mutate(genes, rate, amount):
         """
-        Input
-            genes:  the genome to mutate
-            rate:   probability 0-1 each gene will be mutated
+        Purpose: iterate through each gene and potentially mutate leg length or radius
+        Input:
+            genes: the genome to mutate
+            rate: probability 0-1 a gene will be mutated
             amount: max magnitude of the mutation. value is adjusted to be 
                     random amount between -amount/2 and +amount/2
-        Output
-            copy of genome with random point mutations
+        Output: copy of genome with random point mutations
         """
         new_genes = copy.copy(genes)
         for gene in new_genes:
@@ -212,6 +245,12 @@ class Genome():
 
     @staticmethod
     def shrink_mutate(genes, rate):
+        """
+        Purpose: potentially remove one gene from genome
+        Input: 
+            genes: the genome
+            rate: probability (0-1) a gene will be removed 
+        """
         if len(genes) == 1:
             return genes
         # if rate is high, more likely to shrink
@@ -223,6 +262,12 @@ class Genome():
 
     @staticmethod
     def grow_mutate(genes, rate):
+        """
+        Purpose: potentially add one gene to the genome
+        Input:
+            genes: the genome
+            rate: probability (0-1) a gene will be added
+        """
         # if rate is high, more likely to grow
         if np.random.rand() < rate:
             gene = Genome.get_random_gene(len(genes[0]))
@@ -231,17 +276,31 @@ class Genome():
 
     @staticmethod
     def to_csv(dna, csv_file):
+        """
+        Purpose: returns creatures genome to CSV file
+        Input: 
+            dna: the genome
+            csv_file: file path 
+        """
+        # start with empty string
         csv_str = ""
+        # iterate through dna and add string for each row
         for gene in dna:
             for val in gene:
                 csv_str = csv_str + str(val) + ","
             csv_str = csv_str + '\n'
 
+        # write csv file to disk
         with open(csv_file, 'w') as f:
             f.write(csv_str)
 
     @staticmethod
     def from_csv(filename):
+        """
+        Purpose: load a creature's dna from csv file
+        Input: filepath to read CSV file
+        Output: genome for the creature (list of list of floats)
+        """
         csv_str = ''
         # read whole file into string
         with open(filename) as f:
@@ -255,11 +314,6 @@ class Genome():
             if len(gene) > 0:
                 dna.append(gene)
         return dna
-
-
-
-
-
 
 
 class URDFLink:
@@ -280,6 +334,16 @@ class URDFLink:
                  control_waveform=0.1,
                  control_amp=0.1,
                  control_freq=0.1):
+        """
+        Purpose: 
+                stores all of the properties present in a gene
+                these properties will generate <link> and <joint>
+                elements as well as control the motor
+
+        Note:   
+                some properties will not be used depending on the 
+                purpose of the GA experiment
+        """
         self.name = name
         self.parent_name = parent_name
         self.recur = recur
@@ -299,10 +363,14 @@ class URDFLink:
         self.control_waveform = control_waveform
         self.control_amp = control_amp
         self.control_freq = control_freq
-
         self.sibling_ind = 1
 
     def to_link_element(self, adom):
+        """
+        Purpose: convert stored values into a URDF <link> element
+        Input: adom is an XML starter template
+        Output: correctly structured XML representing a link
+        """
         link_tag = adom.createElement("link")
         link_tag.setAttribute("name", self.name)
         
@@ -360,6 +428,11 @@ class URDFLink:
         return link_tag
 
     def to_joint_element(self, adom):
+        """
+        Purpose: convert stored values into a URDF <joint> element
+        Input: adom is an XML starter template
+        Output: correctly structured XML representing a joint        
+        """
         joint_tag = adom.createElement("joint")
         joint_tag.setAttribute("name", self.name + "_to_" + self.parent_name)
         joint_tag.setAttribute("type", "revolute")
