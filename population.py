@@ -13,24 +13,6 @@ class Population():
 
 
     @staticmethod
-    def get_fitness_map(fits):
-        fitmap = []
-        total = 0
-        for f in fits:
-            total = total + f
-            fitmap.append(total)
-        return fitmap
-
-    @staticmethod
-    def select_parent(fitmap):
-        r = np.random.rand() # 0-1
-        r = r * fitmap[-1] # scale to range of fitnesses
-        for i in range (len(fitmap)): # iterate through fitnesses
-            # NOTE: would be better if selected highest fitness?
-            if r <= fitmap[i]: # select if fitness is big enough
-                return i
-
-    @staticmethod
     def select_parent_tournament(fitness_scores, tournament_size=3):
         """
         Selects one parent using tournament selection.

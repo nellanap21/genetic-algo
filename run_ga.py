@@ -45,9 +45,6 @@ def run_ga():
             f"{np.mean(links):.3f}\n"
         )
 
-        fitmap = poplib.Population.get_fitness_map(fitness_scores)
-
-
         # ELITISM
         best_ind = np.argmax(fitness_scores)
         elite = crlib.Creature(1)
