@@ -55,9 +55,13 @@ def main(csv_file):
 
     # assume creature sitting at origin
     c.update_position([0,0,0])
-    orientation = p.getQuaternionFromEuler([0, math.pi / 2, math.pi / 2])
+    # assuming a 6, 0, 1 staring location
+    # 0, 0, 0 means points straight up
+    # 0, math.pi / 2, 0 means pointing away from pyramid
+    # 0, math.pi / 2, math.pi means pointing to pyramid
+    orientation = p.getQuaternionFromEuler([0, math.pi / 2, math.pi])
     # sets position to slightly above the ground to fix the flying problem
-    p.resetBasePositionAndOrientation(cid, [0, -6, 1], orientation)
+    p.resetBasePositionAndOrientation(cid, [6, 0, 1], orientation)
 
     # Print joint information
     num_joints = p.getNumJoints(cid)

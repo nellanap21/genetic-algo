@@ -26,7 +26,7 @@ def make_arena(arena_size=10, wall_height=1):
     mountain_position = (0, 0, -1)  # Adjust as needed
     mountain_orientation = p.getQuaternionFromEuler((0, 0, 0))
     p.setAdditionalSearchPath('shapes/')
-    mountain = p.loadURDF("gaussian_pyramid.urdf", mountain_position, mountain_orientation, useFixedBase=1)
+    mountain = p.loadURDF("hill.urdf", mountain_position, mountain_orientation, useFixedBase=1)
 
     # Increase mountain friction
 

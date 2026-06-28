@@ -1,6 +1,7 @@
 import pybullet as p
 from multiprocessing import Pool
 import environment as envt
+import math
 
 class Simulation():
     def __init__(self, sim_id=0):
@@ -35,7 +36,13 @@ class Simulation():
 
         # sets position to slightly above the ground to fix the flying problem
         # start at side to have consistent starting position
-        p.resetBasePositionAndOrientation(cid, [0,-6,1], [0,0,0,2], physicsClientId=pid)
+        orientation = p.getQuaternionFromEuler([0, math.pi / 2, math.pi])
+        p.resetBasePositionAndOrientation(
+            cid,
+            [0, -6, 1],
+            orientation,
+            physicsClientId=pid
+        )
 
         for step in range(iterations):
             p.stepSimulation(physicsClientId=pid)
