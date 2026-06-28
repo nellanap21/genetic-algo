@@ -68,7 +68,8 @@ def main(csv_file):
         print("Joint", j, info[1].decode("utf-8"), "type:", info[2])
 
     # needed for mac users to interact
-    for frame in range(SIM_LENGTH):
+    #for frame in range(SIM_LENGTH):
+    while True:
         for jid in range(p.getNumJoints(cid)):
             m = c.get_motors()[jid]
 

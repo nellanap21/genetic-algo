@@ -11,14 +11,14 @@ SIM_LENGTH = 1200
 GENERATIONS = 50
 
 # genome settings
-GENE_COUNT = 20                         # Number of genes/limbs in creature
-POINT_MUTATION_RATE = 0.1       # Percent chance of mutating a gene
+GENE_COUNT = 20                 # Number of genes/limbs on initial creature
+POINT_MUTATION_RATE = 0.1       # Percent chance of mutating value on gene
 POINT_MUTATION_AMOUNT = 0.01
-GROW_RATE = 0.0                 # discourage evolving extra limbs
-SHRINK_RATE = 0.0              # removes accidental extra limbs
+GROW_RATE = 0.2                 # add links
+SHRINK_RATE = 0.2               # removes links
 
 
-logs = ["generation,stage,best_fitness,mean_fitness,max_links,mean_links\n"]
+logs = ["generation,best_fitness,mean_fitness,max_links,mean_links\n"]
 
 
 
@@ -86,6 +86,6 @@ def run_ga():
 if __name__ == "__main__":
     run_ga()
 
-    filename = f"logs/gens_{GENERATIONS}_sim_{SIM_LENGTH}_pop_{POPULATION}_gene_{GENE_COUNT}.csv"
+    filename = f"logs/point_{POINT_MUTATION_RATE}_pamount_{POINT_MUTATION_AMOUNT}_grow_{GROW_RATE}_shrink_{SHRINK_RATE}.csv"
     with open(filename, "w") as f:
         f.writelines(logs)

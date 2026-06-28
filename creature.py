@@ -3,6 +3,9 @@ import genome
 from enum import Enum
 import numpy as np
 
+BODY_LENGTH = 1.5
+BODY_RADIUS = 0.1
+
 class MotorType(Enum):
     PULSE = 1
     SINE = 2
@@ -28,6 +31,13 @@ class Creature:
     def __init__(self, gene_count):
         self.spec = genome.Genome.get_gene_spec()
         self.dna = genome.Genome.get_random_genome(len(self.spec), gene_count)
+
+        # when the creature first is created, hardcode the leg values to be 1/4
+        length_ind = self.spec["link_length"]["ind"]
+        radius_ind = self.spec["link_radius"]["ind"]
+        self.dna[:, length_ind] = BODY_LENGTH / 4
+        self.dna[:, radius_ind] = BODY_RADIUS / 3
+
         self.flat_links = None
         self.exp_links = None
         self.motors = None

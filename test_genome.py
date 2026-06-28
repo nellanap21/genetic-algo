@@ -53,7 +53,6 @@ class GenomeTest (unittest.TestCase):
         spec = genome.Genome.get_gene_spec()
         gene = genome.Genome.get_random_gene(len(spec))
         gene_dict = genome.Genome.get_gene_dict(gene, spec)
-        #print(gene_dict)
         self.assertIn("link_recurrence", gene_dict)
 
     def testGenomeToDict(self):

@@ -25,8 +25,8 @@ class Genome():
         # allows you to pull value out of a gene by name
         gene_spec = {
             "link_shape": {"scale":1},
-            "link_length": {"scale":0.75},
-            "link_radius": {"scale":0.15},
+            "link_length": {"scale":1}, # largest possible is size of body
+            "link_radius": {"scale":1},
             "link_recurrence": {"scale":1},
             "link_mass": {"scale":1},
             "joint_type": {"scale":1},
@@ -130,8 +130,8 @@ class Genome():
                 link_length = BODY_LENGTH
                 link_radius = BODY_RADIUS
             else:   # Fixed leg length
-                link_length = LEG_LENGTH #gdict["link_length"]
-                link_radius = LEG_RADIUS #gdict["link_radius"]
+                link_length = gdict["link_length"]
+                link_radius = gdict["link_radius"]
 
             recur = gdict["link_recurrence"]
             link = URDFLink(name=link_name, 
@@ -172,7 +172,7 @@ class Genome():
         min_length = min(len(g1), len(g2))
         # check if one genome has 0 or 1 genes
         if min_length < 2:
-            return np.concatenate(g1, g2)
+            return np.concatenate((g1, g2))
         # select random gene and concatenate at that gene
         xo = np.random.randint(1, min_length)
         g3 = np.concatenate((g1[0:xo], g2[xo:]))
@@ -192,13 +192,13 @@ class Genome():
         """
         new_genes = copy.copy(genes)
         for gene in new_genes:
+
             # if rate is high, the more likely to mutate
             if np.random.rand() < rate:
-                ind = np.random.randint(len(gene)) # choose one gene
+                ind = np.random.choice([1,2]) # choose link_length or link_radius number
 
                 # randomize the amount value is changed
                 r = (np.random.rand() - 0.5) * amount
-                gene[ind] = gene[ind] + r
                 mutated = gene[ind] + r
 
                 # keep the mutated value between (0,1)
