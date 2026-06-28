@@ -4,6 +4,7 @@ import creature as crlib
 import genome as genlib
 import fitness as fitlib
 import numpy as np
+from datetime import datetime
 
 # genetic algorithm settings
 POPULATION = 20
@@ -73,10 +74,7 @@ def run_ga():
             cr.set_dna(dna)
             new_gen.append(cr)
         
-        # NOTE: replace the lowest with the elite
         new_gen[0] = elite # you are being replaced with elite
-        # if generation % (generations / 10) == 0:
-            #print(generation)
         csv_filename = f"elites/elite{generation}.csv"
         genlib.Genome.to_csv(elite.dna, csv_filename)
         pop.creatures = new_gen
@@ -86,6 +84,8 @@ def run_ga():
 if __name__ == "__main__":
     run_ga()
 
-    filename = f"logs/point_{POINT_MUTATION_RATE}_pamount_{POINT_MUTATION_AMOUNT}_grow_{GROW_RATE}_shrink_{SHRINK_RATE}.csv"
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    filename = f"logs/final_ga_{timestamp}.csv"
     with open(filename, "w") as f:
         f.writelines(logs)
