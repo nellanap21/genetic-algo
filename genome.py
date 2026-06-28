@@ -25,8 +25,8 @@ class Genome():
         # allows you to pull value out of a gene by name
         gene_spec = {
             "link_shape": {"scale":1},
-            "link_length": {"scale":1}, # largest possible is size of body
-            "link_radius": {"scale":1},
+            "link_length": {"scale":0.75},
+            "link_radius": {"scale":0.15},
             "link_recurrence": {"scale":1},
             "link_mass": {"scale":1},
             "joint_type": {"scale":1},
