@@ -9,7 +9,7 @@ from datetime import datetime
 # genetic algorithm settings
 POPULATION = 20
 SIM_LENGTH = 1200
-GENERATIONS = 50
+GENERATIONS = 10
 
 # genome settings
 GENE_COUNT = 20                 # Number of genes/limbs on initial creature
