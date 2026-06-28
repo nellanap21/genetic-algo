@@ -2,6 +2,9 @@ import pybullet as p
 
 
 def make_arena(arena_size=10, wall_height=1):
+    """
+    Purpose: integrate coursework arena and mountain code
+    """
     wall_thickness = 0.5
 
     # Create floor
@@ -29,11 +32,9 @@ def make_arena(arena_size=10, wall_height=1):
     mountain = p.loadURDF("mountain_with_cubes.urdf", mountain_position, mountain_orientation, useFixedBase=1)
 
     # Increase mountain friction
-
+    # Adapted from pybullet quickstart guide
     p.changeDynamics(
-        mountain,
-        -1,                    # base link of the mountain
-        lateralFriction=4.0,
-        spinningFriction=0.2,
-        rollingFriction=0.0
+        mountain,               # body ID
+        -1,                     # link index -1 for the base
+        lateralFriction=4.0     # friction coefficient
     )
