@@ -18,11 +18,8 @@ POINT_MUTATION_AMOUNT = 0.01
 GROW_RATE = 0.2                 # add links
 SHRINK_RATE = 0.2               # removes links
 
-
+# start log file
 logs = ["generation,best_fitness,mean_fitness,max_links,mean_links\n"]
-
-
-
 
 def run_ga():
     pop = poplib.Population(pop_size=POPULATION, gene_count=GENE_COUNT)

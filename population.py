@@ -15,18 +15,11 @@ class Population():
     @staticmethod
     def select_parent_tournament(fitness_scores, tournament_size=3):
         """
-        Selects one parent using tournament selection.
-
-        Parameters:
-            fitness_scores (list or np.ndarray):
-                Fitness score for each creature. Higher is better.
-
-            tournament_size (int):
-                Number of random creatures competing in the tournament.
-
-        Returns:
-            int:
-                Index of the winning parent.
+        Purpose: selects one parent using tournament selection
+        Input:
+            fitness_scores: fitness score for each creature
+            tournament_size: number of random creatures in contest
+        Output: index of winner
         """
         # select tournament competitors
         competitors = np.random.choice(
